@@ -9,16 +9,11 @@ import {
   Fish,
   Leaf,
   MapPin,
-  Menu,
   Search,
   ShoppingBag,
   Sparkles,
   Store,
   UtensilsCrossed,
-  X,
-  ShoppingCart,
-  User,
-  GraduationCap,
   Star,
   CheckCircle2,
   Building2,
@@ -28,18 +23,17 @@ import {
   Plus
 } from 'lucide-react'
 
-import { Product, Stall, CampusEvent, UserProfile, CartItem } from '@/lib/types'
-import { PRODUCTS, STALLS, CAMPUS_EVENTS, DEMO_USERS } from '@/lib/mock-data'
-import { AuthModal } from '@/components/bup/AuthModal'
+import Link from 'next/link'
+import { Product, Stall, CampusEvent } from '@/lib/types'
+import { STALLS, CAMPUS_EVENTS } from '@/lib/mock-data'
 import { BottomDock } from '@/components/bup/BottomDock'
-import { CartDrawer } from '@/components/bup/CartDrawer'
 import { SearchModal } from '@/components/bup/SearchModal'
 import { StallBookingModal } from '@/components/bup/StallBookingModal'
 import { ProductQuickViewModal } from '@/components/bup/ProductQuickViewModal'
 import { CampusEventsModal } from '@/components/bup/CampusEventsModal'
 import { CampusMapModal } from '@/components/bup/CampusMapModal'
-import { UserProfileModal } from '@/components/bup/UserProfileModal'
 import { ExtravagantStallSection } from '@/components/bup/ExtravagantStallSection'
+import { useCart } from '@/components/marketplace/CartProvider'
 
 const CATEGORIES = [
   'All',
@@ -51,69 +45,34 @@ const CATEGORIES = [
 ] as const
 
 export default function Page() {
-  // Application Data State
-  const [productsList] = useState<Product[]>(PRODUCTS)
+  const { addItem, count: totalCartCount } = useCart()
+  const [productsList, setProductsList] = useState<Product[]>([])
   const [stallsList, setStallsList] = useState<Stall[]>(STALLS)
   const [eventsList] = useState<CampusEvent[]>(CAMPUS_EVENTS)
 
-  // Filtering & Selection
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const [selectedStall, setSelectedStall] = useState<Stall | null>(null)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [activeSection, setActiveSection] = useState<string>('top')
 
-  // Cart State
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
-
-  // User Authentication State
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null)
-
-  // Modals Visibility
-  const [isAuthOpen, setIsAuthOpen] = useState(false)
-  const [authInitialTab, setAuthInitialTab] = useState<'bup' | 'outside-login' | 'outside-register'>('bup')
-  const [isCartOpen, setIsCartOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isEventsOpen, setIsEventsOpen] = useState(false)
   const [isMapOpen, setIsMapOpen] = useState(false)
-  const [isProfileOpen, setIsProfileOpen] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
 
-  // Toast Notification
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   const showToast = (msg: string) => {
     setToastMessage(msg)
-    setTimeout(() => {
-      setToastMessage(null)
-    }, 3200)
+    setTimeout(() => setToastMessage(null), 3200)
   }
 
-  // Load persisted user & cart from localStorage on mount
   useEffect(() => {
-    try {
-      const savedUser = localStorage.getItem('bup_ecommerce_user')
-      if (savedUser) {
-        setCurrentUser(JSON.parse(savedUser))
-      }
-      const savedCart = localStorage.getItem('bup_ecommerce_cart')
-      if (savedCart) {
-        setCartItems(JSON.parse(savedCart))
-      }
-    } catch (e) {
-      console.error('Error reading localStorage', e)
-    }
+    fetch('/api/products')
+      .then((r) => r.json())
+      .then((data: Product[]) => setProductsList(data))
+      .catch(() => setProductsList([]))
   }, [])
 
-  // Persist cart
-  useEffect(() => {
-    try {
-      localStorage.setItem('bup_ecommerce_cart', JSON.stringify(cartItems))
-    } catch (e) {
-      console.error('Error writing to localStorage', e)
-    }
-  }, [cartItems])
-
-  // Track active section on scroll
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['top', 'market', 'stalls', 'services']
@@ -134,59 +93,18 @@ export default function Page() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // User Auth Actions
-  const handleSuccessLogin = (user: UserProfile) => {
-    setCurrentUser(user)
-    try {
-      localStorage.setItem('bup_ecommerce_user', JSON.stringify(user))
-    } catch (e) {}
-    showToast(`Welcome, ${user.name}! ${user.isBupVerified ? 'BUP Student/Faculty discount enabled.' : 'Logged in.'}`)
-  }
-
-  const handleSignOut = () => {
-    setCurrentUser(null)
-    try {
-      localStorage.removeItem('bup_ecommerce_user')
-    } catch (e) {}
-    showToast('Signed out successfully.')
-  }
-
-  // Cart Actions
   const handleAddToCart = (product: Product, quantity = 1) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id)
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        )
-      }
-      return [...prev, { product, quantity }]
-    })
-    showToast(`Added "${product.name.slice(0, 24)}..." to your campus bag!`)
-  }
-
-  const handleUpdateCartQuantity = (productId: string, delta: number) => {
-    setCartItems((prev) =>
-      prev
-        .map((item) => {
-          if (item.product.id === productId) {
-            const newQty = item.quantity + delta
-            return newQty > 0 ? { ...item, quantity: newQty } : null
-          }
-          return item
-        })
-        .filter(Boolean) as CartItem[]
+    addItem(
+      {
+        productId: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        sellerName: product.seller,
+      },
+      quantity
     )
-  }
-
-  const handleRemoveCartItem = (productId: string) => {
-    setCartItems((prev) => prev.filter((item) => item.product.id !== productId))
-  }
-
-  const handleClearCart = () => {
-    setCartItems([])
+    showToast(`Added "${product.name.slice(0, 24)}..." to your campus bag!`)
   }
 
   // Stall Booking Confirmation
@@ -206,10 +124,8 @@ export default function Page() {
     (p) => selectedCategory === 'All' || p.category === selectedCategory
   )
 
-  const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
-
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#FAF5E9] text-[#392525] pb-24">
+    <div className="min-h-screen overflow-x-hidden bg-[#FAF5E9] text-[#392525] pb-24">
       
       {/* Toast Notification Banner */}
       {toastMessage && (
@@ -218,141 +134,6 @@ export default function Page() {
           <span>{toastMessage}</span>
         </div>
       )}
-
-      {/* HEADER */}
-      <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 lg:px-10">
-        
-        {/* Logo and University Identity */}
-        <a href="#top" className="flex items-center gap-2.5 font-semibold tracking-tight" aria-label="BUP E-Commerce home">
-          <span className="grid size-10 place-items-center rounded-2xl bg-[#213527] text-[#E3E890] shadow-md">
-            <GraduationCap className="size-5" />
-          </span>
-          <span className="text-xl font-bold tracking-tight text-[#213527]">
-            BUP<span className="text-[#B25D3E]">Nest</span>
-          </span>
-        </a>
-
-        {/* Desktop Navigation */}
-        <nav
-          className={`${
-            menuOpen ? 'flex' : 'hidden'
-          } absolute left-5 right-5 top-20 z-30 flex-col gap-3 rounded-3xl border border-[#392525]/10 bg-[#FAF5E9] p-6 shadow-2xl md:static md:flex md:flex-row md:items-center md:gap-8 md:border-0 md:bg-transparent md:p-0 md:shadow-none`}
-          aria-label="Main navigation"
-        >
-          <a
-            className="text-sm font-semibold hover:text-[#B25D3E] transition-colors"
-            href="#market"
-            onClick={() => setMenuOpen(false)}
-          >
-            Marketplace
-          </a>
-          <a
-            className="text-sm font-semibold hover:text-[#B25D3E] transition-colors"
-            href="#stalls"
-            onClick={() => setMenuOpen(false)}
-          >
-            Stall spaces
-          </a>
-          <a
-            className="text-sm font-semibold hover:text-[#B25D3E] transition-colors"
-            href="#services"
-            onClick={() => setMenuOpen(false)}
-          >
-            Campus services
-          </a>
-          <button
-            onClick={() => {
-              setIsEventsOpen(true)
-              setMenuOpen(false)
-            }}
-            className="text-left text-sm font-semibold hover:text-[#B25D3E] transition-colors md:hidden"
-          >
-            Campus Notices & Events
-          </button>
-          <button
-            onClick={() => {
-              setIsMapOpen(true)
-              setMenuOpen(false)
-            }}
-            className="text-left text-sm font-semibold hover:text-[#B25D3E] transition-colors md:hidden"
-          >
-            Interactive Campus Map
-          </button>
-
-          {/* Mobile Auth button */}
-          <div className="pt-3 border-t border-[#392525]/10 md:hidden flex flex-col gap-2">
-            {currentUser ? (
-              <button
-                onClick={() => {
-                  setIsProfileOpen(true)
-                  setMenuOpen(false)
-                }}
-                className="flex items-center justify-between rounded-xl bg-white p-3 text-xs font-bold"
-              >
-                <span>{currentUser.name} ({currentUser.studentId || 'Guest'})</span>
-                <span className="text-[#B25D3E]">Profile →</span>
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  setAuthInitialTab('bup')
-                  setIsAuthOpen(true)
-                  setMenuOpen(false)
-                }}
-                className="flex items-center justify-center gap-2 rounded-xl bg-[#213527] py-3 text-center text-xs font-bold text-[#FAF5E9]"
-              >
-                <User className="size-4 text-[#E3E890]" />
-                <span>Sign In</span>
-              </button>
-            )}
-          </div>
-        </nav>
-
-        {/* Header Right Actions */}
-        <div className="flex items-center gap-2.5">
-          {/* Authentication State Button */}
-          {currentUser ? (
-            <button
-              onClick={() => setIsProfileOpen(true)}
-              className="hidden sm:inline-flex items-center gap-2 rounded-full border border-[#213527]/20 bg-white/80 py-1.5 pl-2 pr-4 text-xs font-semibold text-[#213527] shadow-sm hover:bg-white transition-all"
-            >
-              <span className="grid size-7 place-items-center rounded-full bg-[#E3E890] text-[#213527]">
-                {currentUser.role === 'student' ? (
-                  <GraduationCap className="size-4" />
-                ) : (
-                  <User className="size-4" />
-                )}
-              </span>
-              <div className="text-left">
-                <span className="block font-bold leading-none">{currentUser.name.split(' ')[0]}</span>
-                <span className="text-[10px] text-[#728383] font-mono leading-none">
-                  {currentUser.studentId || 'Outside User'}
-                </span>
-              </div>
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                setAuthInitialTab('bup')
-                setIsAuthOpen(true)
-              }}
-              className="hidden sm:inline-flex items-center gap-2 rounded-full bg-[#213527] px-4 py-2 text-xs font-semibold text-[#FAF5E9] shadow-sm transition-all hover:bg-[#16241a]"
-            >
-              <User className="size-3.5 text-[#E3E890]" />
-              <span>Sign In</span>
-            </button>
-          )}
-
-          {/* Mobile Menu Toggle */}
-          <button
-            className="rounded-full p-2.5 text-[#392525] md:hidden hover:bg-black/5"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          >
-            {menuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
-          </button>
-        </div>
-      </header>
 
       {/* HERO SECTION */}
       <section
@@ -372,13 +153,20 @@ export default function Page() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a
-              href="#market"
+            <Link
+              href="/shop"
               className="inline-flex items-center gap-2.5 rounded-full bg-[#213527] px-6 py-4 text-sm font-semibold text-[#FAF5E9] shadow-lg transition-all hover:bg-[#16241a] hover:shadow-xl"
             >
               <span>Explore Market</span>
               <ArrowRight className="size-4" />
-            </a>
+            </Link>
+
+            <Link
+              href="/sell"
+              className="rounded-full border border-[#392525]/25 bg-white/70 px-6 py-4 text-sm font-semibold hover:bg-white transition-all shadow-sm text-[#392525]"
+            >
+              Sell on Nest
+            </Link>
 
             <a
               href="#stalls"
@@ -531,13 +319,19 @@ export default function Page() {
                 <Search className="size-4 text-[#E3E890]" />
                 <span>Search catalog</span>
               </button>
-              <button
-                onClick={() => setIsCartOpen(true)}
+              <Link
+                href="/shop"
+                className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-semibold hover:bg-white/20 transition-colors"
+              >
+                View all
+              </Link>
+              <Link
+                href="/cart"
                 className="flex items-center gap-2 rounded-full bg-[#E3E890] px-4 py-2.5 text-xs font-bold text-[#211515] hover:bg-white transition-colors"
               >
                 <ShoppingBag className="size-4" />
                 <span>Bag ({totalCartCount})</span>
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -637,10 +431,9 @@ export default function Page() {
       <ExtravagantStallSection
         stalls={stallsList}
         onSelectStallForBooking={(stall) => setSelectedStall(stall)}
-        currentUser={currentUser}
+        currentUser={null}
         onOpenAuth={() => {
-          setAuthInitialTab('bup')
-          setIsAuthOpen(true)
+          window.location.href = '/login'
         }}
       />
 
@@ -689,56 +482,27 @@ export default function Page() {
         </div>
 
         <div className="flex gap-6 font-medium">
-          <a href="#market" className="hover:text-[#B25D3E] transition-colors">Marketplace</a>
+          <Link href="/shop" className="hover:text-[#B25D3E] transition-colors">Marketplace</Link>
+          <Link href="/sell" className="hover:text-[#B25D3E] transition-colors">Sell</Link>
           <a href="#stalls" className="hover:text-[#B25D3E] transition-colors">Stalls</a>
           <button onClick={() => setIsEventsOpen(true)} className="hover:text-[#B25D3E] transition-colors">Notices</button>
           <button onClick={() => setIsMapOpen(true)} className="hover:text-[#B25D3E] transition-colors">Map</button>
         </div>
       </footer>
 
-      {/* THE ENHANCED LOWER DOCK */}
       <BottomDock
         cartCount={totalCartCount}
-        currentUser={currentUser}
-        onOpenCart={() => setIsCartOpen(true)}
+        currentUser={null}
+        onOpenCart={() => {
+          window.location.href = '/cart'
+        }}
         onOpenAuth={() => {
-          if (currentUser) {
-            setIsProfileOpen(true)
-          } else {
-            setAuthInitialTab('bup')
-            setIsAuthOpen(true)
-          }
+          window.location.href = '/login'
         }}
         onOpenSearch={() => setIsSearchOpen(true)}
         activeSection={activeSection}
       />
 
-      {/* MODALS */}
-      {/* 1. Auth Modal (BUP ID Login, Outside Sign In, Outside Registration) */}
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onSuccessLogin={handleSuccessLogin}
-        initialTab={authInitialTab}
-      />
-
-      {/* 2. Slide-Over Cart & Checkout Drawer */}
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        items={cartItems}
-        onUpdateQuantity={handleUpdateCartQuantity}
-        onRemoveItem={handleRemoveCartItem}
-        onClearCart={handleClearCart}
-        currentUser={currentUser}
-        onOpenAuth={() => {
-          setIsCartOpen(false)
-          setAuthInitialTab('bup')
-          setIsAuthOpen(true)
-        }}
-      />
-
-      {/* 3. Live Search Modal */}
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
@@ -750,46 +514,33 @@ export default function Page() {
         onAddToCart={(product) => handleAddToCart(product, 1)}
       />
 
-      {/* 4. Stall Reservation Modal */}
       <StallBookingModal
         stall={selectedStall}
         onClose={() => setSelectedStall(null)}
-        currentUser={currentUser}
+        currentUser={null}
         onOpenAuth={() => {
-          setAuthInitialTab('bup')
-          setIsAuthOpen(true)
+          window.location.href = '/login'
         }}
         onBookingConfirmed={handleBookingConfirmed}
       />
 
-      {/* 5. Product Quick View Detail Modal */}
       <ProductQuickViewModal
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         onAddToCart={handleAddToCart}
       />
 
-      {/* 6. Campus Events Modal */}
       <CampusEventsModal
         isOpen={isEventsOpen}
         onClose={() => setIsEventsOpen(false)}
         events={eventsList}
       />
 
-      {/* 7. Campus Map Modal */}
       <CampusMapModal
         isOpen={isMapOpen}
         onClose={() => setIsMapOpen(false)}
       />
 
-      {/* 8. User Profile Modal */}
-      <UserProfileModal
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
-        user={currentUser}
-        onSignOut={handleSignOut}
-      />
-
-    </main>
+    </div>
   )
 }
