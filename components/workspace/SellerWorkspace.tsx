@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { Product, Stall } from '@/lib/types'
 import { useWorkspace } from './WorkspaceContext'
+import { ExtravagantStallSection } from '@/components/bup/ExtravagantStallSection'
 
 interface SellerWorkspaceProps {
   products: Product[]
@@ -30,6 +31,8 @@ interface SellerWorkspaceProps {
   onDeleteProduct: (productId: string) => void
   onToggleStock: (productId: string) => void
   onSelectStallForBooking: (stall: Stall) => void
+  activeSubTab?: 'listings' | 'stalls' | 'guidelines'
+  onSubTabChange?: (tab: 'listings' | 'stalls' | 'guidelines') => void
 }
 
 export function SellerWorkspace({
@@ -39,9 +42,17 @@ export function SellerWorkspace({
   onDeleteProduct,
   onToggleStock,
   onSelectStallForBooking,
+  activeSubTab: controlledSubTab,
+  onSubTabChange,
 }: SellerWorkspaceProps) {
   const { setActiveTab } = useWorkspace()
-  const [activeSubTab, setActiveSubTab] = useState<'listings' | 'stalls' | 'guidelines'>('listings')
+  const [internalSubTab, setInternalSubTab] = useState<'listings' | 'stalls' | 'guidelines'>('listings')
+
+  const activeSubTab = controlledSubTab ?? internalSubTab
+  const setActiveSubTab = (tab: 'listings' | 'stalls' | 'guidelines') => {
+    if (onSubTabChange) onSubTabChange(tab)
+    setInternalSubTab(tab)
+  }
   const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false)
 
   // Form State for New Product
@@ -316,68 +327,18 @@ export function SellerWorkspace({
         </section>
       )}
 
-      {/* SUB-TAB 2: LAKE STALLS MANAGER */}
+      {/* SUB-TAB 2: FULL CAMPUS POP-UP STALLS MANAGER */}
       {activeSubTab === 'stalls' && (
-        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-8">
-          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="font-serif text-xl font-bold text-[#392525]">
-                Monpura Lake Promenade Pop-up Spaces
-              </h2>
-              <p className="text-xs text-[#728383]">
-                Rent official campus pop-up stalls for club events, bake sales, tech showcases, and varsity merch.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {stalls.map((stall) => (
-              <div
-                key={stall.id}
-                className="rounded-2xl border border-[#392525]/15 bg-white p-5 shadow-sm transition hover:shadow-md"
-              >
-                <div className="flex items-start justify-between">
-                  <span className="font-mono text-xs font-bold text-[#B25D3E]">{stall.id}</span>
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                      stall.status === 'Open'
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : stall.status === 'Popular'
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-stone-200 text-stone-700'
-                    }`}
-                  >
-                    {stall.status}
-                  </span>
-                </div>
-
-                <h3 className="mt-2 font-serif text-lg font-bold text-[#392525]">{stall.name}</h3>
-                <p className="mt-1 flex items-center gap-1 text-xs text-[#728383]">
-                  <MapPin className="size-3 text-[#B25D3E]" />
-                  <span>{stall.zone}</span>
-                </p>
-
-                <div className="mt-4 flex items-center justify-between border-t border-[#392525]/10 pt-3">
-                  <div>
-                    <span className="text-xs text-[#728383]">Daily Rate:</span>{' '}
-                    <strong className="text-sm font-bold text-[#213527]">৳{stall.dailyRate}</strong>
-                  </div>
-                  <button
-                    onClick={() => onSelectStallForBooking(stall)}
-                    disabled={stall.status === 'Reserved'}
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
-                      stall.status === 'Reserved'
-                        ? 'bg-stone-200 text-stone-500 cursor-not-allowed'
-                        : 'bg-[#213527] text-white hover:bg-[#16241a]'
-                    }`}
-                  >
-                    {stall.status === 'Reserved' ? 'Reserved' : 'Book Space'}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <div className="w-full">
+          <ExtravagantStallSection
+            stalls={stalls}
+            onSelectStallForBooking={onSelectStallForBooking}
+            currentUser={null}
+            onOpenAuth={() => {
+              window.location.href = '/login'
+            }}
+          />
+        </div>
       )}
 
       {/* SUB-TAB 3: CAMPUS SELLER GUIDELINES */}

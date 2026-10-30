@@ -33,7 +33,6 @@ import { StallBookingModal } from '@/components/bup/StallBookingModal'
 import { ProductQuickViewModal } from '@/components/bup/ProductQuickViewModal'
 import { CampusEventsModal } from '@/components/bup/CampusEventsModal'
 import { CampusMapModal } from '@/components/bup/CampusMapModal'
-import { ExtravagantStallSection } from '@/components/bup/ExtravagantStallSection'
 import { useCart } from '@/components/marketplace/CartProvider'
 import { useWorkspace } from '@/components/workspace/WorkspaceContext'
 import { BuyerWorkspace } from '@/components/workspace/BuyerWorkspace'
@@ -50,6 +49,7 @@ export default function Page() {
   const [selectedStall, setSelectedStall] = useState<Stall | null>(null)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [activeSection, setActiveSection] = useState<string>('top')
+  const [sellerSubTab, setSellerSubTab] = useState<'listings' | 'stalls' | 'guidelines'>('listings')
 
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isEventsOpen, setIsEventsOpen] = useState(false)
@@ -135,6 +135,9 @@ export default function Page() {
 
   // 4 Curated Spotlight Products for the Homepage Quick View
   const spotlightProducts = productsList.slice(0, 4)
+
+  // 3 Featured Lakeside Stalls for the Homepage Quick View
+  const featuredStalls = stallsList.slice(0, 3)
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#FAF5E9] text-[#392525]">
@@ -459,15 +462,159 @@ export default function Page() {
               </div>
             </section>
 
-            {/* EXTRAVAGANT BUP SPATIAL STALLS SECTION */}
-            <ExtravagantStallSection
-              stalls={stallsList}
-              onSelectStallForBooking={(stall) => setSelectedStall(stall)}
-              currentUser={null}
-              onOpenAuth={() => {
-                window.location.href = '/login'
-              }}
-            />
+            {/* CAMPUS STALLS QUICK VIEW (Concise Preview on Desktop 1) */}
+            <section id="stalls" className="bg-[#0e1711] text-[#FAF5E9] px-5 py-16 lg:px-10 lg:py-20 mt-12 relative overflow-hidden">
+              {/* Ambient lighting effect */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute -top-32 left-1/4 h-80 w-80 rounded-full bg-emerald-900/20 blur-3xl" />
+                <div className="absolute -bottom-20 right-1/4 h-80 w-80 rounded-full bg-amber-500/10 blur-3xl" />
+              </div>
+
+              <div className="relative mx-auto max-w-7xl">
+                {/* Header */}
+                <div className="mb-10 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="rounded-full bg-[#E3E890] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#211515]">
+                        Stalls Quick View
+                      </span>
+                      <span className="text-xs text-white/60">
+                        Desktop 1 Preview
+                      </span>
+                    </div>
+                    <h2 className="font-serif text-3xl tracking-[-.04em] sm:text-5xl text-white">
+                      Monpura Lakefront <em className="text-[#E3E890] not-italic">Pop-up Spaces</em>
+                    </h2>
+                    <p className="mt-2 text-xs sm:text-sm text-white/70 max-w-xl">
+                      Prime promenade plots for varsity student ventures, club exhibitions, and dining pop-ups. Move to the Seller Studio to explore all 9 campus zones, blueprints, and reservations.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => {
+                        setSellerSubTab('stalls')
+                        setActiveTab('seller')
+                      }}
+                      className="flex items-center gap-2 rounded-full bg-[#E3E890] px-5 py-3 text-xs font-bold text-[#211515] shadow-lg hover:bg-white transition-all active:scale-95"
+                    >
+                      <Store className="size-4" />
+                      <span>Full Stalls Hub (Seller Studio)</span>
+                      <ArrowRight className="size-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3 Featured Lakeside Stalls */}
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {featuredStalls.map((stall) => (
+                    <div
+                      key={stall.id}
+                      className="group relative flex flex-col justify-between overflow-hidden rounded-[2rem] border border-white/15 bg-white/[0.04] p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-[#E3E890]/40 hover:bg-white/[0.07] shadow-xl"
+                    >
+                      <div>
+                        {/* Image box with status badge */}
+                        <div className="relative h-44 overflow-hidden rounded-2xl bg-black/40">
+                          <img
+                            src={stall.image}
+                            alt={stall.name}
+                            className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                          <span className="absolute top-3 left-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-mono font-bold text-[#E3E890] backdrop-blur-md border border-white/10">
+                            {stall.id}
+                          </span>
+                          <span
+                            className={`absolute top-3 right-3 rounded-full px-2.5 py-1 text-[10px] font-bold shadow-sm ${
+                              stall.status === 'Open'
+                                ? 'bg-emerald-500/90 text-white'
+                                : stall.status === 'Popular'
+                                ? 'bg-amber-400 text-stone-900 font-black'
+                                : 'bg-stone-500 text-white'
+                            }`}
+                          >
+                            {stall.status === 'Popular' ? '★ Prime Spot' : stall.status}
+                          </span>
+
+                          <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-xs text-white/90">
+                            <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-300">
+                              <MapPin className="size-3" /> {stall.zone}
+                            </span>
+                            <span className="font-mono text-[11px] text-white/70">
+                              {stall.dimensions}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="mt-4">
+                          <h3 className="font-serif text-lg font-bold text-white group-hover:text-[#E3E890] transition-colors">
+                            {stall.name}
+                          </h3>
+                          <p className="mt-1 text-xs text-white/70 line-clamp-2">
+                            {stall.description}
+                          </p>
+
+                          <div className="mt-3 flex items-center gap-3 text-[11px] text-white/60">
+                            <span>Footfall: <strong className="text-white/90">{stall.footfall}</strong></span>
+                            <span>•</span>
+                            <span>Power: <strong className="text-white/90">{stall.powerGrid}</strong></span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Footer with rate and reserve */}
+                      <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-3">
+                        <div>
+                          <span className="text-[10px] uppercase tracking-wider text-white/50">Daily Rate</span>
+                          <p className="font-serif text-lg font-bold text-[#E3E890]">
+                            ৳{stall.dailyRate} <span className="text-xs font-normal text-white/60">/ day</span>
+                          </p>
+                        </div>
+
+                        <button
+                          onClick={() => setSelectedStall(stall)}
+                          disabled={stall.status === 'Reserved'}
+                          className={`rounded-full px-4 py-2 text-xs font-bold transition-all shadow-sm active:scale-95 ${
+                            stall.status === 'Reserved'
+                              ? 'bg-stone-600 text-stone-400 cursor-not-allowed'
+                              : 'bg-[#E3E890] text-[#141f17] hover:bg-white'
+                          }`}
+                        >
+                          {stall.status === 'Reserved' ? 'Reserved' : 'Reserve Space'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Gateway to Full Stalls Hub in Seller Studio */}
+                <div className="mt-12 rounded-3xl border border-white/15 bg-gradient-to-r from-black/80 via-[#213527]/80 to-black/80 p-6 sm:p-8 backdrop-blur-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 shadow-2xl">
+                  <div>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E3E890] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#211515]">
+                      <Store className="size-3.5" />
+                      Campus Pop-up Headquarters
+                    </span>
+                    <h3 className="mt-2 font-serif text-2xl font-bold text-white sm:text-3xl">
+                      Looking for all 9 zones, interactive blueprints &amp; night mode?
+                    </h3>
+                    <p className="mt-1 text-xs text-white/80 max-w-xl">
+                      Explore the Library concourse, Academic Wing (FST/FBS), Auditorium Plaza, and full spatial blueprint in the dedicated Seller Studio.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSellerSubTab('stalls')
+                      setActiveTab('seller')
+                    }}
+                    className="inline-flex items-center gap-2.5 rounded-full bg-[#E3E890] px-6 py-3.5 text-xs font-bold text-[#211515] shadow-lg hover:bg-white transition-all shrink-0 active:scale-95"
+                  >
+                    <span>Open Stalls Manager (Desktop 3)</span>
+                    <ArrowRight className="size-4" />
+                  </button>
+                </div>
+              </div>
+            </section>
 
             {/* CAMPUS SERVICES & EVENTS BANNER */}
             <section id="services" className="border-t border-[#392525]/10 px-5 py-14 lg:px-10">
@@ -540,6 +687,8 @@ export default function Page() {
               onDeleteProduct={handleDeleteProduct}
               onToggleStock={handleToggleStock}
               onSelectStallForBooking={(s) => setSelectedStall(s)}
+              activeSubTab={sellerSubTab}
+              onSubTabChange={(t) => setSellerSubTab(t)}
             />
           </div>
 
