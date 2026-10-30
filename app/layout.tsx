@@ -2,7 +2,9 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { CartProvider } from '@/components/marketplace/CartProvider'
-import { SiteHeader } from '@/components/marketplace/SiteHeader'
+import { getSession } from '@/lib/auth'
+import { WorkspaceProvider } from '@/components/workspace/WorkspaceContext'
+import { WorkspaceHeader } from '@/components/workspace/WorkspaceHeader'
 import { SiteFooter } from '@/components/marketplace/SiteFooter'
 import { ensureSeeded } from '@/lib/seed'
 
@@ -30,14 +32,17 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   await ensureSeeded()
+  const user = await getSession()
 
   return (
     <html lang="en">
       <body className="antialiased min-h-screen flex flex-col bg-[#FAF5E9]">
         <CartProvider>
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
+          <WorkspaceProvider>
+            <WorkspaceHeader user={user} />
+            <main className="flex-1">{children}</main>
+            <SiteFooter />
+          </WorkspaceProvider>
         </CartProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

@@ -6,19 +6,16 @@ import {
   Store,
   Search,
   ShoppingCart,
-  User,
-  GraduationCap,
-  Sparkles,
-  MapPin,
-  CalendarDays
+  GraduationCap
 } from 'lucide-react'
 import { UserProfile } from '@/lib/types'
+import { useWorkspace } from '@/components/workspace/WorkspaceContext'
 
 interface BottomDockProps {
   cartCount: number
-  currentUser: UserProfile | null
+  currentUser?: UserProfile | null
   onOpenCart: () => void
-  onOpenAuth: () => void
+  onOpenAuth?: () => void
   onOpenSearch: () => void
   onOpenStallBooking?: () => void
   onOpenEvents?: () => void
@@ -31,6 +28,8 @@ export function BottomDock({
   onOpenSearch,
   activeSection,
 }: BottomDockProps) {
+  const { activeTab, setActiveTab } = useWorkspace()
+
   const scrollTo = (id: string) => {
     const el = document.getElementById(id)
     if (el) {
@@ -38,17 +37,47 @@ export function BottomDock({
     }
   }
 
+  const handleHomeClick = () => {
+    if (activeTab !== 'hub') {
+      setActiveTab('hub')
+      setTimeout(() => scrollTo('top'), 100)
+    } else {
+      scrollTo('top')
+    }
+  }
+
+  const handleMarketClick = () => {
+    if (activeTab !== 'buyer') {
+      setActiveTab('buyer')
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
+  const handleStallsClick = () => {
+    if (activeTab !== 'hub') {
+      setActiveTab('hub')
+      setTimeout(() => scrollTo('stalls'), 150)
+    } else {
+      scrollTo('stalls')
+    }
+  }
+
+  const isHomeActive = activeTab === 'hub' && activeSection !== 'stalls'
+  const isMarketActive = activeTab === 'buyer'
+  const isStallsActive = activeTab === 'hub' && activeSection === 'stalls'
+
   return (
     <aside
       aria-label="Campus quick navigation dock"
       className="fixed bottom-5 left-1/2 z-40 flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/20 bg-[#211515]/95 p-1.5 text-[#FAF5E9] shadow-[0_12px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl transition-all sm:gap-1.5 sm:p-2"
     >
-      {/* Home / Top */}
+      {/* Home / Campus Overview */}
       <button
-        onClick={() => scrollTo('top')}
+        onClick={handleHomeClick}
         className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-semibold transition-all sm:px-4 ${
-          activeSection === 'top'
-            ? 'bg-white/20 text-[#FAF5E9] shadow-sm'
+          isHomeActive
+            ? 'bg-white/20 text-[#FAF5E9] shadow-sm font-bold'
             : 'text-[#FAF5E9]/80 hover:bg-white/15 hover:text-white'
         }`}
         title="Go to Campus Overview"
@@ -57,12 +86,12 @@ export function BottomDock({
         <span>Home</span>
       </button>
 
-      {/* Shop / Market */}
+      {/* Buyer Market */}
       <button
-        onClick={() => scrollTo('market')}
+        onClick={handleMarketClick}
         className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-semibold transition-all sm:px-4 ${
-          activeSection === 'market'
-            ? 'bg-white/20 text-[#FAF5E9] shadow-sm'
+          isMarketActive
+            ? 'bg-[#B25D3E] text-white shadow-sm font-bold'
             : 'text-[#FAF5E9]/80 hover:bg-white/15 hover:text-white'
         }`}
         title="Browse Campus Marketplace"
@@ -71,17 +100,17 @@ export function BottomDock({
         <span>Market</span>
       </button>
 
-      {/* Book a Stall Space - Fixed Highlight */}
+      {/* Book a Stall Space */}
       <button
-        onClick={() => scrollTo('stalls')}
+        onClick={handleStallsClick}
         className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-semibold transition-all sm:px-4 ${
-          activeSection === 'stalls'
+          isStallsActive
             ? 'bg-[#E3E890] text-[#211515] shadow-sm font-bold'
             : 'text-[#FAF5E9]/80 hover:bg-white/15 hover:text-white'
         }`}
         title="Book a Campus Stall or Pop-up Space"
       >
-        <Store className={`size-4 shrink-0 ${activeSection === 'stalls' ? 'text-[#211515]' : 'text-inherit'}`} />
+        <Store className={`size-4 shrink-0 ${isStallsActive ? 'text-[#211515]' : 'text-inherit'}`} />
         <span>Stalls</span>
       </button>
 
