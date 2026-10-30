@@ -20,12 +20,26 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
   const { activeTab, setActiveTab } = useWorkspace()
   const pathname = usePathname()
   const router = useRouter()
-  const isHomepage = pathname === '/'
+
+  const handleLogoClick = () => {
+    setActiveTab('hub')
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+    }
+    if (pathname !== '/') {
+      router.push('/')
+    } else {
+      if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href)
+        url.searchParams.delete('tab')
+        window.history.pushState({}, '', url.pathname)
+      }
+    }
+  }
 
   const handleTabClick = (tab: WorkspaceTab) => {
-    if (isHomepage) {
-      setActiveTab(tab)
-    } else {
+    setActiveTab(tab)
+    if (pathname !== '/') {
       router.push(`/?tab=${tab}`)
     }
   }
@@ -34,12 +48,13 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
     <header className="sticky top-0 z-40 border-b border-[#392525]/10 bg-[#FAF5E9]/95 backdrop-blur-md transition-all">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2.5 sm:grid sm:grid-cols-3 sm:gap-2 sm:px-6 sm:py-3">
         
-        {/* Left: Clean Brand Logo & Name */}
+        {/* Left: Clean Brand Logo & Name - Always returns to Campus Hub */}
         <div className="flex items-center justify-start">
           <button
-            onClick={() => handleTabClick('hub')}
-            className="group flex items-center gap-2.5 text-left focus:outline-none"
-            title="Return to Campus Hub"
+            type="button"
+            onClick={handleLogoClick}
+            className="group flex items-center gap-2.5 text-left focus:outline-none cursor-pointer"
+            title="Return to Campus Hub Homepage"
           >
             <span className="grid size-9 place-items-center rounded-xl bg-[#213527] text-[#FAF5E9] shadow-sm transition-transform group-hover:scale-105">
               <GraduationCap className="size-5 text-[#E3E890]" />
@@ -58,8 +73,9 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
           >
             {/* Desktop 1: Campus Hub */}
             <button
+              type="button"
               onClick={() => handleTabClick('hub')}
-              className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 sm:px-4 sm:py-2 ${
+              className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 sm:px-4 sm:py-2 cursor-pointer ${
                 activeTab === 'hub'
                   ? 'bg-[#213527] text-[#FAF5E9] shadow-md'
                   : 'text-[#392525]/75 hover:bg-black/5 hover:text-[#392525]'
@@ -74,8 +90,9 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
 
             {/* Desktop 2: Buyer Market */}
             <button
+              type="button"
               onClick={() => handleTabClick('buyer')}
-              className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 sm:px-4 sm:py-2 ${
+              className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 sm:px-4 sm:py-2 cursor-pointer ${
                 activeTab === 'buyer'
                   ? 'bg-[#B25D3E] text-[#FAF5E9] shadow-md'
                   : 'text-[#392525]/75 hover:bg-black/5 hover:text-[#392525]'
@@ -90,8 +107,9 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
 
             {/* Desktop 3: Seller Studio */}
             <button
+              type="button"
               onClick={() => handleTabClick('seller')}
-              className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 sm:px-4 sm:py-2 ${
+              className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 sm:px-4 sm:py-2 cursor-pointer ${
                 activeTab === 'seller'
                   ? 'bg-[#392525] text-[#FAF5E9] shadow-md'
                   : 'text-[#392525]/75 hover:bg-black/5 hover:text-[#392525]'

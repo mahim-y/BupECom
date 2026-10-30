@@ -153,9 +153,9 @@ export default function Page() {
       {/* HORIZONTAL WORKSPACE CANVAS (Windows-style desktop sliding container) */}
       <div className="relative w-full overflow-hidden">
         <div
-          className="flex w-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          className="flex w-[300vw] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{
-            transform: `translateX(-${tabIndex * 100}%)`,
+            transform: `translateX(-${tabIndex * 100}vw)`,
             alignItems: 'flex-start',
           }}
         >
@@ -164,10 +164,12 @@ export default function Page() {
           {/* DESKTOP 1: CAMPUS HUB (Landing Page Overview & Stalls)   */}
           {/* ======================================================== */}
           <div
-            className={`w-full min-w-full shrink-0 basis-full transition-opacity duration-300 pb-20 ${
-              activeTab === 'hub' || isTransitioning
+            className={`w-[100vw] min-w-[100vw] max-w-[100vw] shrink-0 transition-opacity duration-300 pb-20 ${
+              activeTab === 'hub'
                 ? 'opacity-100'
-                : 'opacity-0 pointer-events-none max-h-screen overflow-hidden'
+                : isTransitioning
+                ? 'opacity-100'
+                : 'opacity-0 pointer-events-none h-0 max-h-0 overflow-hidden'
             }`}
           >
             {/* HERO SECTION */}
@@ -334,34 +336,14 @@ export default function Page() {
             <section id="market" className="bg-[#211515] px-5 py-16 text-[#FAF5E9] lg:px-10 lg:py-24 mt-12">
               <div className="mx-auto max-w-7xl">
                 
-                {/* Header & Quick Action */}
-                <div className="mb-10 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="rounded-full bg-[#E3E890] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#211515]">
-                        Market Quick View
-                      </span>
-                      <span className="text-xs text-white/60">
-                        Desktop 1 Preview
-                      </span>
-                    </div>
-                    <h2 className="font-serif text-3xl tracking-[-.04em] sm:text-5xl text-white">
-                      Daily Campus <em className="text-[#B25D3E] not-italic">Spotlight &amp; Drops</em>
-                    </h2>
-                    <p className="mt-2 text-xs sm:text-sm text-white/70 max-w-xl">
-                      Top curated varsity apparel, canteen favorites, and textbook highlights. Launch the full Buyer Market for live department search, price sorting, and instant carting.
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setActiveTab('buyer')}
-                      className="flex items-center gap-2 rounded-full bg-[#B25D3E] px-5 py-3 text-xs font-bold text-white shadow-lg hover:bg-[#c26543] transition-all active:scale-95"
-                    >
-                      <span>Open Full Buyer Market</span>
-                      <ArrowRight className="size-4" />
-                    </button>
-                  </div>
+                {/* Header */}
+                <div className="mb-10">
+                  <h2 className="font-serif text-3xl tracking-[-.04em] sm:text-5xl text-white">
+                    Daily Campus <em className="text-[#B25D3E] not-italic">Spotlight &amp; Drops</em>
+                  </h2>
+                  <p className="mt-2 text-xs sm:text-sm text-white/70 max-w-xl">
+                    Top curated varsity apparel, canteen favorites, and textbook highlights.
+                  </p>
                 </div>
 
                 {/* 4 Spotlight Product Cards */}
@@ -472,37 +454,13 @@ export default function Page() {
 
               <div className="relative mx-auto max-w-7xl">
                 {/* Header */}
-                <div className="mb-10 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="rounded-full bg-[#E3E890] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#211515]">
-                        Stalls Quick View
-                      </span>
-                      <span className="text-xs text-white/60">
-                        Desktop 1 Preview
-                      </span>
-                    </div>
-                    <h2 className="font-serif text-3xl tracking-[-.04em] sm:text-5xl text-white">
-                      Monpura Lakefront <em className="text-[#E3E890] not-italic">Pop-up Spaces</em>
-                    </h2>
-                    <p className="mt-2 text-xs sm:text-sm text-white/70 max-w-xl">
-                      Prime promenade plots for varsity student ventures, club exhibitions, and dining pop-ups. Move to the Seller Studio to explore all 9 campus zones, blueprints, and reservations.
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => {
-                        setSellerSubTab('stalls')
-                        setActiveTab('seller')
-                      }}
-                      className="flex items-center gap-2 rounded-full bg-[#E3E890] px-5 py-3 text-xs font-bold text-[#211515] shadow-lg hover:bg-white transition-all active:scale-95"
-                    >
-                      <Store className="size-4" />
-                      <span>Full Stalls Hub (Seller Studio)</span>
-                      <ArrowRight className="size-4" />
-                    </button>
-                  </div>
+                <div className="mb-10">
+                  <h2 className="font-serif text-3xl tracking-[-.04em] sm:text-5xl text-white">
+                    Monpura Lakefront <em className="text-[#E3E890] not-italic">Pop-up Spaces</em>
+                  </h2>
+                  <p className="mt-2 text-xs sm:text-sm text-white/70 max-w-xl">
+                    Prime promenade plots for varsity student ventures, club exhibitions, and dining pop-ups.
+                  </p>
                 </div>
 
                 {/* 3 Featured Lakeside Stalls */}
@@ -654,10 +612,12 @@ export default function Page() {
           {/* DESKTOP 2: DEDICATED BUYER MARKETPLACE                   */}
           {/* ======================================================== */}
           <div
-            className={`w-full min-w-full shrink-0 basis-full transition-opacity duration-300 pb-20 ${
-              activeTab === 'buyer' || isTransitioning
+            className={`w-[100vw] min-w-[100vw] max-w-[100vw] shrink-0 transition-opacity duration-300 pb-20 ${
+              activeTab === 'buyer'
                 ? 'opacity-100'
-                : 'opacity-0 pointer-events-none max-h-screen overflow-hidden'
+                : isTransitioning
+                ? 'opacity-100'
+                : 'opacity-0 pointer-events-none h-0 max-h-0 overflow-hidden'
             }`}
           >
             <BuyerWorkspace
@@ -674,10 +634,12 @@ export default function Page() {
           {/* DESKTOP 3: DEDICATED SELLER STUDIO                       */}
           {/* ======================================================== */}
           <div
-            className={`w-full min-w-full shrink-0 basis-full transition-opacity duration-300 pb-20 ${
-              activeTab === 'seller' || isTransitioning
+            className={`w-[100vw] min-w-[100vw] max-w-[100vw] shrink-0 transition-opacity duration-300 pb-20 ${
+              activeTab === 'seller'
                 ? 'opacity-100'
-                : 'opacity-0 pointer-events-none max-h-screen overflow-hidden'
+                : isTransitioning
+                ? 'opacity-100'
+                : 'opacity-0 pointer-events-none h-0 max-h-0 overflow-hidden'
             }`}
           >
             <SellerWorkspace

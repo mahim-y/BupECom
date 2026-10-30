@@ -45,7 +45,12 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const setActiveTab = useCallback((tab: WorkspaceTab) => {
-    if (tab === activeTab) return
+    if (tab === activeTab) {
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+      return
+    }
     setIsTransitioning(true)
     setActiveTabState(tab)
 
@@ -58,12 +63,12 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         url.searchParams.set('tab', tab)
       }
       window.history.pushState({}, '', url.toString())
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo(0, 0)
     }
 
     const timer = setTimeout(() => {
       setIsTransitioning(false)
-    }, 600)
+    }, 500)
     return () => clearTimeout(timer)
   }, [activeTab])
 
