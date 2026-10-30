@@ -107,25 +107,31 @@ export function SellerWorkspace({
   }
 
   return (
-    <div className="w-full bg-[#FAF5E9] text-[#392525] pb-24">
+    <div className="w-full bg-[#0e1711] text-[#FAF5E9] pb-24 min-h-screen relative overflow-hidden">
       
+      {/* Ambient lakefront lighting effect matching Stalls Quick View */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-emerald-900/20 blur-3xl" />
+        <div className="absolute top-1/2 right-1/4 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl" />
+      </div>
+
       {/* SELLER STUDIO HERO HEADER */}
-      <section className="border-b border-[#392525]/10 bg-gradient-to-b from-stone-900 via-[#211515] to-[#1c1212] px-4 py-8 text-[#FAF5E9] sm:px-8 sm:py-12">
+      <section className="relative border-b border-white/10 bg-gradient-to-b from-[#080d0a] via-[#0e1711] to-[#0e1711] px-4 py-8 text-[#FAF5E9] sm:px-8 sm:py-12">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E3E890] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#211515]">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E3E890] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#141f17] shadow-sm">
                   <Store className="size-3.5" />
-                  Seller Studio • Desktop 3
+                  Seller Studio
                 </span>
-                <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white/80">
+                <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white/80 border border-white/10">
                   Campus Merchant Portal
                 </span>
               </div>
 
               <h1 className="mt-3 font-serif text-3xl font-bold tracking-tight text-white sm:text-5xl">
-                BUP Merchant Studio
+                BUP <em className="text-[#E3E890] not-italic">Merchant Studio</em>
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#FAF5E9]/80 sm:text-base">
                 List campus merchandise, monitor student sales, fulfill delivery handovers, and manage lakeside pop-up stalls in real time.
@@ -136,7 +142,7 @@ export function SellerWorkspace({
             <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={() => setIsNewProductModalOpen(true)}
-                className="inline-flex items-center gap-2 rounded-full bg-[#E3E890] px-5 py-2.5 text-xs font-bold text-[#211515] shadow-lg transition hover:bg-white active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full bg-[#E3E890] px-5 py-2.5 text-xs font-bold text-[#141f17] shadow-lg transition hover:bg-white active:scale-95 cursor-pointer"
               >
                 <Plus className="size-4" />
                 <span>+ List New Product</span>
@@ -144,7 +150,7 @@ export function SellerWorkspace({
 
               <button
                 onClick={() => setActiveTab('buyer')}
-                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-white/20"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-white/20 active:scale-95 cursor-pointer"
               >
                 <ShoppingBag className="size-4 text-[#E3E890]" />
                 <span>View Buyer Market</span>
@@ -154,7 +160,7 @@ export function SellerWorkspace({
               <button
                 type="button"
                 onClick={onOpenCart}
-                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-white/20 active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-white/20 active:scale-95 cursor-pointer"
                 title="View Campus Cart"
               >
                 <ShoppingCart className="size-4 text-[#E3E890]" />
@@ -165,7 +171,7 @@ export function SellerWorkspace({
 
           {/* REAL-TIME SELLER METRICS CARDS */}
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-md">
+            <div className="rounded-2xl border border-white/15 bg-white/[0.04] p-4 backdrop-blur-md shadow-xl hover:border-[#E3E890]/30 transition-all">
               <div className="flex items-center justify-between text-[#FAF5E9]/75 text-xs">
                 <span>Total Revenue</span>
                 <span className="text-emerald-400 font-bold">+24%</span>
@@ -174,7 +180,7 @@ export function SellerWorkspace({
               <p className="mt-1 text-[11px] text-white/60">From varsity batches &amp; stall sales</p>
             </div>
 
-            <div className="rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-md">
+            <div className="rounded-2xl border border-white/15 bg-white/[0.04] p-4 backdrop-blur-md shadow-xl hover:border-[#E3E890]/30 transition-all">
               <div className="flex items-center justify-between text-[#FAF5E9]/75 text-xs">
                 <span>Campus Orders</span>
                 <span className="text-[#E3E890] font-bold">3 Pending</span>
@@ -183,7 +189,7 @@ export function SellerWorkspace({
               <p className="mt-1 text-[11px] text-white/60">39 successfully handed over</p>
             </div>
 
-            <div className="rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-md">
+            <div className="rounded-2xl border border-white/15 bg-white/[0.04] p-4 backdrop-blur-md shadow-xl hover:border-[#E3E890]/30 transition-all">
               <div className="flex items-center justify-between text-[#FAF5E9]/75 text-xs">
                 <span>Active Listings</span>
                 <span className="text-emerald-400 font-bold">Live</span>
@@ -194,7 +200,7 @@ export function SellerWorkspace({
               <p className="mt-1 text-[11px] text-white/60">Listed on Buyer Market</p>
             </div>
 
-            <div className="rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-md">
+            <div className="rounded-2xl border border-white/15 bg-white/[0.04] p-4 backdrop-blur-md shadow-xl hover:border-[#E3E890]/30 transition-all">
               <div className="flex items-center justify-between text-[#FAF5E9]/75 text-xs">
                 <span>Lake Pop-up Stalls</span>
                 <span className="text-[#E3E890] font-bold">Active</span>
@@ -207,15 +213,15 @@ export function SellerWorkspace({
       </section>
 
       {/* SELLER CONTROL TABS */}
-      <section className="sticky top-[58px] z-30 border-b border-[#392525]/10 bg-[#FAF5E9]/95 backdrop-blur-md px-4 py-3 sm:px-8">
+      <section className="sticky top-[58px] z-30 border-b border-white/10 bg-[#0e1711]/95 backdrop-blur-md px-4 py-3 sm:px-8">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveSubTab('listings')}
               className={`rounded-full px-4 py-2 text-xs font-semibold transition-all ${
                 activeSubTab === 'listings'
-                  ? 'bg-[#213527] text-[#FAF5E9] shadow-sm font-bold'
-                  : 'text-[#392525]/80 hover:bg-black/5'
+                  ? 'bg-[#E3E890] text-[#141f17] shadow-sm font-bold'
+                  : 'text-white/70 hover:bg-white/10 hover:text-white'
               }`}
             >
               My Product Listings ({products.length})
@@ -225,8 +231,8 @@ export function SellerWorkspace({
               onClick={() => setActiveSubTab('stalls')}
               className={`rounded-full px-4 py-2 text-xs font-semibold transition-all ${
                 activeSubTab === 'stalls'
-                  ? 'bg-[#213527] text-[#FAF5E9] shadow-sm font-bold'
-                  : 'text-[#392525]/80 hover:bg-black/5'
+                  ? 'bg-[#E3E890] text-[#141f17] shadow-sm font-bold'
+                  : 'text-white/70 hover:bg-white/10 hover:text-white'
               }`}
             >
               Lake Stalls Manager ({stalls.length})
@@ -236,8 +242,8 @@ export function SellerWorkspace({
               onClick={() => setActiveSubTab('guidelines')}
               className={`rounded-full px-4 py-2 text-xs font-semibold transition-all ${
                 activeSubTab === 'guidelines'
-                  ? 'bg-[#213527] text-[#FAF5E9] shadow-sm font-bold'
-                  : 'text-[#392525]/80 hover:bg-black/5'
+                  ? 'bg-[#E3E890] text-[#141f17] shadow-sm font-bold'
+                  : 'text-white/70 hover:bg-white/10 hover:text-white'
               }`}
             >
               Campus Seller Rules
@@ -246,7 +252,7 @@ export function SellerWorkspace({
 
           <button
             onClick={() => setIsNewProductModalOpen(true)}
-            className="hidden items-center gap-1.5 rounded-full bg-[#B25D3E] px-4 py-1.5 text-xs font-bold text-[#FAF5E9] shadow-sm hover:bg-[#c26543] sm:inline-flex"
+            className="hidden items-center gap-1.5 rounded-full bg-[#E3E890] px-4 py-1.5 text-xs font-bold text-[#141f17] shadow-sm hover:bg-white transition sm:inline-flex"
           >
             <Plus className="size-3.5" />
             <span>Add Item</span>
@@ -256,20 +262,20 @@ export function SellerWorkspace({
 
       {/* SUB-TAB 1: PRODUCT LISTINGS MANAGER */}
       {activeSubTab === 'listings' && (
-        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-8">
+        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-8 relative">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-serif text-xl font-bold text-[#392525]">
+            <h2 className="font-serif text-xl font-bold text-white">
               Active Campus Listings
             </h2>
-            <span className="text-xs text-[#728383]">
-              Live items appear instantly on Desktop 2 (Buyer Market)
+            <span className="text-xs text-white/60">
+              Live items appear instantly in Buyer Market
             </span>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-[#392525]/15 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-white/15 bg-white/[0.04] backdrop-blur-md shadow-2xl">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="border-b border-[#392525]/10 bg-stone-50 text-[11px] font-bold uppercase tracking-wider text-[#728383]">
+                <thead className="border-b border-white/10 bg-white/[0.06] text-[11px] font-bold uppercase tracking-wider text-[#E3E890]">
                   <tr>
                     <th className="px-5 py-3.5">Product &amp; Info</th>
                     <th className="px-4 py-3.5">Category</th>
@@ -279,40 +285,40 @@ export function SellerWorkspace({
                     <th className="px-4 py-3.5 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#392525]/10">
+                <tbody className="divide-y divide-white/10">
                   {products.map((product) => (
-                    <tr key={product.id} className="hover:bg-stone-50/80 transition-colors">
+                    <tr key={product.id} className="hover:bg-white/[0.06] transition-colors">
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="size-12 rounded-xl object-cover border border-[#392525]/10 shrink-0"
+                            className="size-12 rounded-xl object-cover border border-white/15 shrink-0"
                           />
                           <div>
-                            <p className="font-bold text-[#392525] line-clamp-1">{product.name}</p>
-                            <p className="text-[10px] text-[#728383]">{product.deliveryTime}</p>
+                            <p className="font-bold text-white line-clamp-1">{product.name}</p>
+                            <p className="text-[10px] text-white/60">{product.deliveryTime}</p>
                           </div>
                         </div>
                       </td>
 
                       <td className="px-4 py-3.5">
-                        <span className="inline-block rounded-full bg-stone-100 px-2.5 py-1 text-[10px] font-semibold text-[#392525]">
+                        <span className="inline-block rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-semibold text-white/90 border border-white/10">
                           {product.category}
                         </span>
                       </td>
 
-                      <td className="px-4 py-3.5 font-bold text-[#B25D3E] text-sm">
+                      <td className="px-4 py-3.5 font-bold text-[#E3E890] text-sm">
                         ৳{product.price}
                       </td>
 
                       <td className="px-4 py-3.5">
                         <button
                           onClick={() => onToggleStock(product.id)}
-                          className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
+                          className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition border ${
                             product.inStock
-                              ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
-                              : 'bg-red-100 text-red-800 hover:bg-red-200'
+                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/30'
+                              : 'bg-red-500/20 text-red-300 border-red-500/30 hover:bg-red-500/30'
                           }`}
                           title="Click to toggle stock status"
                         >
@@ -320,14 +326,14 @@ export function SellerWorkspace({
                         </button>
                       </td>
 
-                      <td className="px-4 py-3.5 text-[#3E4734] font-medium">
+                      <td className="px-4 py-3.5 text-white/80 font-medium">
                         {product.seller}
                       </td>
 
                       <td className="px-4 py-3.5 text-right">
                         <button
                           onClick={() => onDeleteProduct(product.id)}
-                          className="rounded-full p-1.5 text-stone-400 hover:bg-red-50 hover:text-red-600 transition"
+                          className="rounded-full p-1.5 text-white/40 hover:bg-red-500/20 hover:text-red-400 transition"
                           title="Remove item"
                         >
                           <Trash2 className="size-4" />
@@ -344,7 +350,7 @@ export function SellerWorkspace({
 
       {/* SUB-TAB 2: FULL CAMPUS POP-UP STALLS MANAGER */}
       {activeSubTab === 'stalls' && (
-        <div className="w-full">
+        <div className="w-full relative">
           <ExtravagantStallSection
             stalls={stalls}
             onSelectStallForBooking={onSelectStallForBooking}
@@ -358,42 +364,42 @@ export function SellerWorkspace({
 
       {/* SUB-TAB 3: CAMPUS SELLER GUIDELINES */}
       {activeSubTab === 'guidelines' && (
-        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-8">
-          <div className="rounded-3xl border border-[#392525]/15 bg-white p-6 sm:p-10 shadow-sm">
-            <h2 className="font-serif text-2xl font-bold text-[#392525]">
+        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-8 relative">
+          <div className="rounded-3xl border border-white/15 bg-white/[0.04] p-6 sm:p-10 shadow-2xl backdrop-blur-md">
+            <h2 className="font-serif text-2xl font-bold text-white">
               BUP Campus Seller Guidelines &amp; Policies
             </h2>
-            <p className="mt-1 text-xs text-[#728383]">
+            <p className="mt-1 text-xs text-white/60">
               Mirpur Cantonment Campus Commerce Standards
             </p>
 
             <div className="mt-6 grid gap-6 md:grid-cols-3">
-              <div className="rounded-2xl border border-[#392525]/10 bg-stone-50 p-4">
-                <div className="grid size-9 place-items-center rounded-xl bg-[#213527] text-[#E3E890] mb-3">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-white">
+                <div className="grid size-9 place-items-center rounded-xl bg-emerald-950 text-[#E3E890] mb-3 border border-emerald-800/40">
                   <ShieldCheck className="size-5" />
                 </div>
-                <h4 className="font-bold text-sm text-[#392525]">0% Commission Fee</h4>
-                <p className="mt-1 text-xs text-[#728383] leading-relaxed">
+                <h4 className="font-bold text-sm text-white">0% Commission Fee</h4>
+                <p className="mt-1 text-xs text-white/60 leading-relaxed">
                   Student-to-student transactions have no platform deductions. Keep 100% of your earnings.
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-[#392525]/10 bg-stone-50 p-4">
-                <div className="grid size-9 place-items-center rounded-xl bg-[#B25D3E] text-white mb-3">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-white">
+                <div className="grid size-9 place-items-center rounded-xl bg-[#213527] text-white mb-3 border border-emerald-700/40">
                   <MapPin className="size-5" />
                 </div>
-                <h4 className="font-bold text-sm text-[#392525]">Designated Pickup Points</h4>
-                <p className="mt-1 text-xs text-[#728383] leading-relaxed">
+                <h4 className="font-bold text-sm text-white">Designated Pickup Points</h4>
+                <p className="mt-1 text-xs text-white/60 leading-relaxed">
                   Deliver packages at Monpura Promenade, Central Library Ground Floor, or Faculty Lounges.
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-[#392525]/10 bg-stone-50 p-4">
-                <div className="grid size-9 place-items-center rounded-xl bg-[#E3E890] text-[#213527] mb-3">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-white">
+                <div className="grid size-9 place-items-center rounded-xl bg-[#E3E890] text-[#141f17] mb-3">
                   <Clock className="size-5" />
                 </div>
-                <h4 className="font-bold text-sm text-[#392525]">Same-Day Campus Delivery</h4>
-                <p className="mt-1 text-xs text-[#728383] leading-relaxed">
+                <h4 className="font-bold text-sm text-white">Same-Day Campus Delivery</h4>
+                <p className="mt-1 text-xs text-white/60 leading-relaxed">
                   Aim to deliver orders within 24 hours between classes for a stellar 5-star student review score.
                 </p>
               </div>
@@ -404,47 +410,47 @@ export function SellerWorkspace({
 
       {/* MODAL: LIST NEW PRODUCT */}
       {isNewProductModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-lg rounded-3xl border border-[#392525]/20 bg-[#FAF5E9] p-6 shadow-2xl sm:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-md animate-in fade-in">
+          <div className="relative w-full max-w-lg rounded-3xl border border-white/20 bg-[#141f17] p-6 shadow-2xl sm:p-8 text-white">
             <button
               onClick={() => setIsNewProductModalOpen(false)}
-              className="absolute right-5 top-5 grid size-8 place-items-center rounded-full bg-stone-200 text-[#392525] hover:bg-stone-300"
+              className="absolute right-5 top-5 grid size-8 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20"
             >
               <X className="size-4" />
             </button>
 
-            <span className="rounded-full bg-[#E3E890] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#211515]">
+            <span className="rounded-full bg-[#E3E890] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#141f17]">
               New Campus Listing
             </span>
-            <h3 className="mt-2 font-serif text-2xl font-bold text-[#392525]">
+            <h3 className="mt-2 font-serif text-2xl font-bold text-white">
               List an Item on BUP Nest
             </h3>
-            <p className="mt-1 text-xs text-[#728383]">
-              Your item will appear instantly in Desktop 2 (Buyer Market) for student buyers.
+            <p className="mt-1 text-xs text-white/70">
+              Your item will appear instantly in Buyer Market for student buyers.
             </p>
 
             <form onSubmit={handleCreateProduct} className="mt-5 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-[#392525]">Product Name *</label>
+                <label className="block text-xs font-bold text-white/90">Product Name *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. BUP ICE Batch 22 Hoodie (Navy Blue)"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-[#392525]/20 bg-white px-3.5 py-2.5 text-xs text-[#392525] focus:border-[#B25D3E] focus:outline-none"
+                  className="mt-1 w-full rounded-xl border border-white/20 bg-white/10 px-3.5 py-2.5 text-xs text-white placeholder:text-white/40 focus:border-[#E3E890] focus:outline-none focus:bg-white/15"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-[#392525]">Category *</label>
+                  <label className="block text-xs font-bold text-white/90">Category *</label>
                   <select
                     value={formData.category}
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value as Product['category'] })
                     }
-                    className="mt-1 w-full rounded-xl border border-[#392525]/20 bg-white px-3.5 py-2.5 text-xs text-[#392525] focus:border-[#B25D3E] focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-white/20 bg-[#0e1711] px-3.5 py-2.5 text-xs text-white focus:border-[#E3E890] focus:outline-none"
                   >
                     <option value="Merch">Merch</option>
                     <option value="Dining & Canteen">Dining &amp; Canteen</option>
@@ -455,46 +461,46 @@ export function SellerWorkspace({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#392525]">Price (BDT ৳) *</label>
+                  <label className="block text-xs font-bold text-white/90">Price (BDT ৳) *</label>
                   <input
                     type="number"
                     required
                     placeholder="e.g. 1250"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-[#392525]/20 bg-white px-3.5 py-2.5 text-xs text-[#392525] focus:border-[#B25D3E] focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-white/20 bg-white/10 px-3.5 py-2.5 text-xs text-white placeholder:text-white/40 focus:border-[#E3E890] focus:outline-none focus:bg-white/15"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#392525]">Seller / Society Name</label>
+                <label className="block text-xs font-bold text-white/90">Seller / Society Name</label>
                 <input
                   type="text"
                   value={formData.seller}
                   onChange={(e) => setFormData({ ...formData, seller: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-[#392525]/20 bg-white px-3.5 py-2.5 text-xs text-[#392525] focus:border-[#B25D3E] focus:outline-none"
+                  className="mt-1 w-full rounded-xl border border-white/20 bg-white/10 px-3.5 py-2.5 text-xs text-white placeholder:text-white/40 focus:border-[#E3E890] focus:outline-none focus:bg-white/15"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#392525]">Image URL</label>
+                <label className="block text-xs font-bold text-white/90">Image URL</label>
                 <input
                   type="url"
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-[#392525]/20 bg-white px-3.5 py-2.5 text-xs text-[#392525] focus:border-[#B25D3E] focus:outline-none"
+                  className="mt-1 w-full rounded-xl border border-white/20 bg-white/10 px-3.5 py-2.5 text-xs text-white placeholder:text-white/40 focus:border-[#E3E890] focus:outline-none focus:bg-white/15"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#392525]">Description</label>
+                <label className="block text-xs font-bold text-white/90">Description</label>
                 <textarea
                   rows={2}
                   placeholder="Details about sizing, condition, handover location..."
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="mt-1 w-full rounded-xl border border-[#392525]/20 bg-white px-3.5 py-2 text-xs text-[#392525] focus:border-[#B25D3E] focus:outline-none"
+                  className="mt-1 w-full rounded-xl border border-white/20 bg-white/10 px-3.5 py-2 text-xs text-white placeholder:text-white/40 focus:border-[#E3E890] focus:outline-none focus:bg-white/15"
                 />
               </div>
 
@@ -502,13 +508,13 @@ export function SellerWorkspace({
                 <button
                   type="button"
                   onClick={() => setIsNewProductModalOpen(false)}
-                  className="rounded-full px-4 py-2 text-xs font-semibold text-stone-600 hover:text-stone-900"
+                  className="rounded-full px-4 py-2 text-xs font-semibold text-white/60 hover:text-white"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#213527] px-6 py-2.5 text-xs font-bold text-[#FAF5E9] shadow-md hover:bg-[#16241a] transition"
+                  className="rounded-full bg-[#E3E890] px-6 py-2.5 text-xs font-bold text-[#141f17] shadow-md hover:bg-white transition"
                 >
                   Publish Listing
                 </button>
@@ -523,11 +529,11 @@ export function SellerWorkspace({
         <button
           type="button"
           onClick={onOpenCart}
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-3 rounded-full bg-[#213527] px-5 py-3.5 text-sm font-bold text-[#FAF5E9] shadow-2xl transition-all duration-300 hover:bg-[#16241a] hover:scale-105 active:scale-95 cursor-pointer border border-white/20"
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-3 rounded-full bg-[#E3E890] px-5 py-3.5 text-sm font-bold text-[#141f17] shadow-2xl transition-all duration-300 hover:bg-white hover:scale-105 active:scale-95 cursor-pointer border border-white/20"
           title="View Shopping Cart"
         >
           <div className="relative">
-            <ShoppingCart className="size-5 shrink-0 text-[#E3E890]" />
+            <ShoppingCart className="size-5 shrink-0 text-[#141f17]" />
             <span className="absolute -top-2.5 -right-2.5 flex size-5 items-center justify-center rounded-full bg-[#B25D3E] text-[10px] font-black text-white shadow-sm">
               {cartCount}
             </span>

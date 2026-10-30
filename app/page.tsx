@@ -71,14 +71,14 @@ export default function Page() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['top', 'market', 'stalls', 'services']
-      const scrollPos = window.scrollY + 200
+      const sections = ['stalls', 'market', 'top']
+      const scrollPos = window.scrollY + 180
       for (const id of sections) {
         const el = document.getElementById(id)
         if (el) {
-          const top = el.offsetTop
-          const height = el.offsetHeight
-          if (scrollPos >= top && scrollPos < top + height) {
+          const rect = el.getBoundingClientRect()
+          const top = rect.top + window.scrollY
+          if (scrollPos >= top) {
             setActiveSection(id)
             break
           }
@@ -333,7 +333,7 @@ export default function Page() {
             </section>
 
             {/* MARKETPLACE QUICK VIEW (Curated Campus Spotlight) */}
-            <section id="market" className="bg-[#211515] px-5 py-16 text-[#FAF5E9] lg:px-10 lg:py-24 mt-12">
+            <section id="market" className="scroll-mt-24 bg-[#211515] px-5 py-16 text-[#FAF5E9] lg:px-10 lg:py-24 mt-12">
               <div className="mx-auto max-w-7xl">
                 
                 {/* Header */}
@@ -429,14 +429,14 @@ export default function Page() {
                       Want to search all 50+ campus products &amp; cafeteria menus?
                     </h3>
                     <p className="mt-1 text-xs text-white/80 max-w-xl">
-                      Switch to Desktop 2 for comprehensive category filters, price sorting, student reviews, and verified seller profiles.
+                      Switch to Buyer Market for comprehensive category filters, price sorting, student reviews, and verified seller profiles.
                     </p>
                   </div>
                   <button
                     onClick={() => setActiveTab('buyer')}
                     className="inline-flex items-center gap-2.5 rounded-full bg-[#E3E890] px-6 py-3.5 text-xs font-bold text-[#211515] shadow-lg hover:bg-white transition-all shrink-0 active:scale-95"
                   >
-                    <span>Launch Buyer Market (Desktop 2)</span>
+                    <span>Launch Buyer Market</span>
                     <ArrowRight className="size-4" />
                   </button>
                 </div>
@@ -445,7 +445,7 @@ export default function Page() {
             </section>
 
             {/* CAMPUS STALLS QUICK VIEW (Concise Preview on Desktop 1) */}
-            <section id="stalls" className="bg-[#0e1711] text-[#FAF5E9] px-5 py-16 lg:px-10 lg:py-20 mt-12 relative overflow-hidden">
+            <section id="stalls" className="scroll-mt-24 bg-[#0e1711] text-[#FAF5E9] px-5 py-16 lg:px-10 lg:py-20 mt-12 relative overflow-hidden">
               {/* Ambient lighting effect */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute -top-32 left-1/4 h-80 w-80 rounded-full bg-emerald-900/20 blur-3xl" />
@@ -567,7 +567,7 @@ export default function Page() {
                     }}
                     className="inline-flex items-center gap-2.5 rounded-full bg-[#E3E890] px-6 py-3.5 text-xs font-bold text-[#211515] shadow-lg hover:bg-white transition-all shrink-0 active:scale-95"
                   >
-                    <span>Open Stalls Manager (Desktop 3)</span>
+                    <span>Open Stalls Manager</span>
                     <ArrowRight className="size-4" />
                   </button>
                 </div>

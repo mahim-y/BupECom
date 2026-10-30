@@ -86,9 +86,6 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
                 <span className="text-xs sm:text-[15px] font-bold tracking-tight">Campus</span>
                 <span className="text-xs sm:text-[15px] font-bold tracking-tight">Hub</span>
               </div>
-              <kbd className="hidden ml-1 rounded bg-black/15 px-1.5 py-0.5 text-[9px] font-mono text-white/70 xl:inline-block">
-                1
-              </kbd>
             </button>
 
             {/* Desktop 2: Buyer Market */}
@@ -106,9 +103,6 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
                 <span className="text-xs sm:text-[15px] font-bold tracking-tight">Buyer</span>
                 <span className="text-xs sm:text-[15px] font-bold tracking-tight">Market</span>
               </div>
-              <kbd className="hidden ml-1 rounded bg-black/15 px-1.5 py-0.5 text-[9px] font-mono text-white/70 xl:inline-block">
-                2
-              </kbd>
             </button>
 
             {/* Desktop 3: Seller Studio */}
@@ -117,7 +111,7 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
               onClick={() => handleTabClick('seller')}
               className={`relative flex items-center gap-2 rounded-full px-3.5 py-1.5 transition-all duration-300 sm:px-4.5 sm:py-2 cursor-pointer ${
                 activeTab === 'seller'
-                  ? 'bg-[#392525] text-[#FAF5E9] shadow-md'
+                  ? 'bg-[#0e1711] text-[#FAF5E9] shadow-md border border-[#E3E890]/30'
                   : 'text-[#392525]/75 hover:bg-black/5 hover:text-[#392525]'
               }`}
             >
@@ -126,9 +120,6 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
                 <span className="text-xs sm:text-[15px] font-bold tracking-tight">Seller</span>
                 <span className="text-xs sm:text-[15px] font-bold tracking-tight">Studio</span>
               </div>
-              <kbd className="hidden ml-1 rounded bg-black/15 px-1.5 py-0.5 text-[9px] font-mono text-white/70 xl:inline-block">
-                3
-              </kbd>
             </button>
           </nav>
         </div>

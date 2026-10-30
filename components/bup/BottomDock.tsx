@@ -31,26 +31,36 @@ export function BottomDock({
   const { activeTab, setActiveTab } = useWorkspace()
 
   const scrollTo = (id: string) => {
+    if (id === 'top') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
     const el = document.getElementById(id)
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' })
+      const navOffset = 80
+      const elementPosition = el.getBoundingClientRect().top + window.scrollY
+      window.scrollTo({
+        top: Math.max(0, elementPosition - navOffset),
+        behavior: 'smooth'
+      })
     }
   }
 
   const handleHomeClick = () => {
     if (activeTab !== 'hub') {
       setActiveTab('hub')
-      setTimeout(() => scrollTo('top'), 100)
+      setTimeout(() => scrollTo('top'), 150)
     } else {
       scrollTo('top')
     }
   }
 
   const handleMarketClick = () => {
-    if (activeTab !== 'buyer') {
-      setActiveTab('buyer')
+    if (activeTab !== 'hub') {
+      setActiveTab('hub')
+      setTimeout(() => scrollTo('market'), 150)
     } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      scrollTo('market')
     }
   }
 
@@ -63,8 +73,8 @@ export function BottomDock({
     }
   }
 
-  const isHomeActive = activeTab === 'hub' && activeSection !== 'stalls'
-  const isMarketActive = activeTab === 'buyer'
+  const isHomeActive = activeTab === 'hub' && activeSection !== 'stalls' && activeSection !== 'market'
+  const isMarketActive = activeTab === 'hub' && activeSection === 'market'
   const isStallsActive = activeTab === 'hub' && activeSection === 'stalls'
 
   return (
