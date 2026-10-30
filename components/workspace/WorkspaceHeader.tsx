@@ -46,44 +46,47 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[#392525]/10 bg-[#FAF5E9]/95 backdrop-blur-md transition-all">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2.5 sm:grid sm:grid-cols-3 sm:gap-2 sm:px-6 sm:py-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 sm:py-3">
         
         {/* Left: Clean Brand Logo & Name - Always returns to Campus Hub */}
-        <div className="flex items-center justify-start">
+        <div className="flex items-center justify-start shrink-0">
           <button
             type="button"
             onClick={handleLogoClick}
-            className="group flex items-center gap-2.5 text-left focus:outline-none cursor-pointer"
+            className="group flex items-center gap-2.5 text-left focus:outline-none cursor-pointer whitespace-nowrap"
             title="Return to Campus Hub Homepage"
           >
-            <span className="grid size-9 place-items-center rounded-xl bg-[#213527] text-[#FAF5E9] shadow-sm transition-transform group-hover:scale-105">
+            <span className="grid size-9 place-items-center rounded-xl bg-[#213527] text-[#FAF5E9] shadow-sm transition-transform group-hover:scale-105 shrink-0">
               <GraduationCap className="size-5 text-[#E3E890]" />
             </span>
-            <span className="font-serif text-lg font-bold tracking-tight text-[#392525] sm:text-xl">
+            <span className="font-serif text-lg font-bold tracking-tight text-[#392525] sm:text-xl whitespace-nowrap">
               BUP Nest
             </span>
           </button>
         </div>
 
-        {/* Center: Dedicated Windows-Style Desktop Switcher (Perfect Centering) */}
-        <div className="flex items-center justify-center">
+        {/* Center: Dedicated Windows-Style Desktop Switcher (Round pill dock, big writings with second word on next line) */}
+        <div className="flex items-center justify-center shrink-0">
           <nav
             aria-label="Workspace Desktops"
-            className="flex items-center rounded-full border border-[#392525]/15 bg-[#392525]/[0.06] p-1 shadow-inner backdrop-blur-sm"
+            className="flex items-center rounded-full border border-[#392525]/15 bg-[#392525]/[0.06] p-1.5 shadow-inner backdrop-blur-sm gap-1 sm:gap-2"
           >
             {/* Desktop 1: Campus Hub */}
             <button
               type="button"
               onClick={() => handleTabClick('hub')}
-              className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 sm:px-4 sm:py-2 cursor-pointer ${
+              className={`relative flex items-center gap-2 rounded-full px-3.5 py-1.5 transition-all duration-300 sm:px-4.5 sm:py-2 cursor-pointer ${
                 activeTab === 'hub'
                   ? 'bg-[#213527] text-[#FAF5E9] shadow-md'
                   : 'text-[#392525]/75 hover:bg-black/5 hover:text-[#392525]'
               }`}
             >
-              <GraduationCap className={`size-3.5 sm:size-4 shrink-0 ${activeTab === 'hub' ? 'text-[#E3E890]' : ''}`} />
-              <span>Campus Hub</span>
-              <kbd className="hidden ml-1 rounded bg-black/15 px-1 py-0.2 text-[9px] font-mono text-white/70 xl:inline-block">
+              <GraduationCap className={`size-4 sm:size-5 shrink-0 ${activeTab === 'hub' ? 'text-[#E3E890]' : ''}`} />
+              <div className="flex flex-col text-left leading-[1.15]">
+                <span className="text-xs sm:text-[15px] font-bold tracking-tight">Campus</span>
+                <span className="text-xs sm:text-[15px] font-bold tracking-tight">Hub</span>
+              </div>
+              <kbd className="hidden ml-1 rounded bg-black/15 px-1.5 py-0.5 text-[9px] font-mono text-white/70 xl:inline-block">
                 1
               </kbd>
             </button>
@@ -92,15 +95,18 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
             <button
               type="button"
               onClick={() => handleTabClick('buyer')}
-              className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 sm:px-4 sm:py-2 cursor-pointer ${
+              className={`relative flex items-center gap-2 rounded-full px-3.5 py-1.5 transition-all duration-300 sm:px-4.5 sm:py-2 cursor-pointer ${
                 activeTab === 'buyer'
                   ? 'bg-[#B25D3E] text-[#FAF5E9] shadow-md'
                   : 'text-[#392525]/75 hover:bg-black/5 hover:text-[#392525]'
               }`}
             >
-              <ShoppingBag className="size-3.5 sm:size-4 shrink-0" />
-              <span>Buyer Market</span>
-              <kbd className="hidden ml-1 rounded bg-black/15 px-1 py-0.2 text-[9px] font-mono text-white/70 xl:inline-block">
+              <ShoppingBag className="size-4 sm:size-5 shrink-0" />
+              <div className="flex flex-col text-left leading-[1.15]">
+                <span className="text-xs sm:text-[15px] font-bold tracking-tight">Buyer</span>
+                <span className="text-xs sm:text-[15px] font-bold tracking-tight">Market</span>
+              </div>
+              <kbd className="hidden ml-1 rounded bg-black/15 px-1.5 py-0.5 text-[9px] font-mono text-white/70 xl:inline-block">
                 2
               </kbd>
             </button>
@@ -109,15 +115,18 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
             <button
               type="button"
               onClick={() => handleTabClick('seller')}
-              className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 sm:px-4 sm:py-2 cursor-pointer ${
+              className={`relative flex items-center gap-2 rounded-full px-3.5 py-1.5 transition-all duration-300 sm:px-4.5 sm:py-2 cursor-pointer ${
                 activeTab === 'seller'
                   ? 'bg-[#392525] text-[#FAF5E9] shadow-md'
                   : 'text-[#392525]/75 hover:bg-black/5 hover:text-[#392525]'
               }`}
             >
-              <Store className="size-3.5 sm:size-4 shrink-0 text-[#E3E890]" />
-              <span>Seller Studio</span>
-              <kbd className="hidden ml-1 rounded bg-black/15 px-1 py-0.2 text-[9px] font-mono text-white/70 xl:inline-block">
+              <Store className="size-4 sm:size-5 shrink-0 text-[#E3E890]" />
+              <div className="flex flex-col text-left leading-[1.15]">
+                <span className="text-xs sm:text-[15px] font-bold tracking-tight">Seller</span>
+                <span className="text-xs sm:text-[15px] font-bold tracking-tight">Studio</span>
+              </div>
+              <kbd className="hidden ml-1 rounded bg-black/15 px-1.5 py-0.5 text-[9px] font-mono text-white/70 xl:inline-block">
                 3
               </kbd>
             </button>

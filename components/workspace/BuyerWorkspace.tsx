@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Sparkles,
   ShoppingBag,
+  ShoppingCart,
   Store,
   MapPin,
   ArrowRight,
@@ -25,6 +26,7 @@ interface BuyerWorkspaceProps {
   onAddToCart: (product: Product, quantity?: number) => void
   onQuickView: (product: Product) => void
   onOpenCart?: () => void
+  cartCount?: number
 }
 
 const CATEGORIES = [
@@ -43,6 +45,7 @@ export function BuyerWorkspace({
   onAddToCart,
   onQuickView,
   onOpenCart,
+  cartCount = 0,
 }: BuyerWorkspaceProps) {
   const { setActiveTab } = useWorkspace()
   const [searchQuery, setSearchQuery] = useState('')
@@ -197,6 +200,22 @@ export function BuyerWorkspace({
                 <option value="rating">Highest Rated</option>
               </select>
             </div>
+
+            {/* Sticky Toolbar Cart Button */}
+            <button
+              type="button"
+              onClick={onOpenCart}
+              className="relative flex items-center gap-2 rounded-full bg-[#B25D3E] px-4 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#9d4c31] active:scale-95 cursor-pointer"
+              title="Open Shopping Cart"
+            >
+              <ShoppingCart className="size-3.5 sm:size-4 shrink-0" />
+              <span>Cart</span>
+              {cartCount > 0 && (
+                <span className="flex size-4.5 items-center justify-center rounded-full bg-[#FAF5E9] text-[10px] font-black text-[#B25D3E] shadow-sm">
+                  {cartCount}
+                </span>
+              )}
+            </button>
           </div>
         </div>
 
@@ -404,6 +423,24 @@ export function BuyerWorkspace({
           </div>
         </div>
       </section>
+
+      {/* FLOATING ACTION CART PILL (Fixed Bottom-Right for Instant Access) */}
+      <button
+        type="button"
+        onClick={onOpenCart}
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-3 rounded-full bg-[#B25D3E] px-5 py-3.5 text-sm font-bold text-[#FAF5E9] shadow-2xl transition-all duration-300 hover:bg-[#9d4c31] hover:scale-105 active:scale-95 cursor-pointer border border-white/25"
+        title="View Shopping Cart"
+      >
+        <div className="relative">
+          <ShoppingCart className="size-5 shrink-0" />
+          {cartCount > 0 && (
+            <span className="absolute -top-2.5 -right-2.5 flex size-5 items-center justify-center rounded-full bg-white text-[10px] font-black text-[#B25D3E] shadow-sm">
+              {cartCount}
+            </span>
+          )}
+        </div>
+        <span>View Cart {cartCount > 0 ? `(${cartCount})` : ''}</span>
+      </button>
 
     </div>
   )

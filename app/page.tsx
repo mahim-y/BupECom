@@ -627,6 +627,7 @@ export default function Page() {
               onOpenCart={() => {
                 window.location.href = '/cart'
               }}
+              cartCount={totalCartCount}
             />
           </div>
 
@@ -651,25 +652,31 @@ export default function Page() {
               onSelectStallForBooking={(s) => setSelectedStall(s)}
               activeSubTab={sellerSubTab}
               onSubTabChange={(t) => setSellerSubTab(t)}
+              onOpenCart={() => {
+                window.location.href = '/cart'
+              }}
+              cartCount={totalCartCount}
             />
           </div>
 
         </div>
       </div>
 
-      {/* BOTTOM PERSISTENT NAVIGATION DOCK */}
-      <BottomDock
-        cartCount={totalCartCount}
-        currentUser={null}
-        onOpenCart={() => {
-          window.location.href = '/cart'
-        }}
-        onOpenAuth={() => {
-          window.location.href = '/login'
-        }}
-        onOpenSearch={() => setIsSearchOpen(true)}
-        activeSection={activeSection}
-      />
+      {/* BOTTOM PERSISTENT NAVIGATION DOCK (ONLY ON CAMPUS HUB / HOMEPAGE) */}
+      {activeTab === 'hub' && (
+        <BottomDock
+          cartCount={totalCartCount}
+          currentUser={null}
+          onOpenCart={() => {
+            window.location.href = '/cart'
+          }}
+          onOpenAuth={() => {
+            window.location.href = '/login'
+          }}
+          onOpenSearch={() => setIsSearchOpen(true)}
+          activeSection={activeSection}
+        />
+      )}
 
       {/* MODALS */}
       <SearchModal

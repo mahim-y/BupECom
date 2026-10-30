@@ -16,6 +16,7 @@ import {
   ArrowRight,
   ShieldCheck,
   ShoppingBag,
+  ShoppingCart,
   Clock,
   Layers,
   X
@@ -33,6 +34,8 @@ interface SellerWorkspaceProps {
   onSelectStallForBooking: (stall: Stall) => void
   activeSubTab?: 'listings' | 'stalls' | 'guidelines'
   onSubTabChange?: (tab: 'listings' | 'stalls' | 'guidelines') => void
+  onOpenCart?: () => void
+  cartCount?: number
 }
 
 export function SellerWorkspace({
@@ -44,6 +47,8 @@ export function SellerWorkspace({
   onSelectStallForBooking,
   activeSubTab: controlledSubTab,
   onSubTabChange,
+  onOpenCart,
+  cartCount = 0,
 }: SellerWorkspaceProps) {
   const { setActiveTab } = useWorkspace()
   const [internalSubTab, setInternalSubTab] = useState<'listings' | 'stalls' | 'guidelines'>('listings')
@@ -144,6 +149,16 @@ export function SellerWorkspace({
                 <ShoppingBag className="size-4 text-[#E3E890]" />
                 <span>View Buyer Market</span>
                 <ArrowRight className="size-3.5" />
+              </button>
+
+              <button
+                type="button"
+                onClick={onOpenCart}
+                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-white/20 active:scale-95 cursor-pointer"
+                title="View Campus Cart"
+              >
+                <ShoppingCart className="size-4 text-[#E3E890]" />
+                <span>Cart {cartCount > 0 ? `(${cartCount})` : ''}</span>
               </button>
             </div>
           </div>
@@ -501,6 +516,24 @@ export function SellerWorkspace({
             </form>
           </div>
         </div>
+      )}
+
+      {/* FLOATING ACTION CART PILL (Fixed Bottom-Right when items are in cart) */}
+      {cartCount > 0 && (
+        <button
+          type="button"
+          onClick={onOpenCart}
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-3 rounded-full bg-[#213527] px-5 py-3.5 text-sm font-bold text-[#FAF5E9] shadow-2xl transition-all duration-300 hover:bg-[#16241a] hover:scale-105 active:scale-95 cursor-pointer border border-white/20"
+          title="View Shopping Cart"
+        >
+          <div className="relative">
+            <ShoppingCart className="size-5 shrink-0 text-[#E3E890]" />
+            <span className="absolute -top-2.5 -right-2.5 flex size-5 items-center justify-center rounded-full bg-[#B25D3E] text-[10px] font-black text-white shadow-sm">
+              {cartCount}
+            </span>
+          </div>
+          <span>Cart ({cartCount})</span>
+        </button>
       )}
 
     </div>
