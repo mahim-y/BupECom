@@ -129,12 +129,19 @@ export function WorkspaceHeader({ user }: WorkspaceHeaderProps) {
           {user ? (
             <div className="flex items-center gap-2">
               <Link
-                href={user.role === 'SELLER' || user.role === 'ADMIN' ? '/seller' : '/orders'}
+                href="/orders"
                 className="flex items-center gap-1.5 rounded-full border border-[#392525]/15 bg-white/70 px-3 py-1.5 text-xs font-semibold text-[#392525] transition hover:bg-white"
-                title="Account & Orders"
+                title="My Orders & Purchases"
               >
                 <span className="size-2 rounded-full bg-emerald-500" />
                 <span className="max-w-[100px] truncate">{user.name}</span>
+              </Link>
+              <Link
+                href="/seller"
+                className="hidden sm:inline-flex items-center gap-1 rounded-full border border-[#392525]/15 bg-white/70 px-2.5 py-1.5 text-[11px] font-semibold text-[#392525] transition hover:bg-white"
+                title="Seller Studio Dashboard"
+              >
+                Dashboard
               </Link>
               <form action={logoutAction}>
                 <button

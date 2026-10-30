@@ -28,7 +28,7 @@ function migrate(db: DatabaseSync) {
       password_hash TEXT NOT NULL,
       name TEXT NOT NULL,
       phone TEXT,
-      role TEXT NOT NULL DEFAULT 'BUYER',
+      role TEXT NOT NULL DEFAULT 'SELLER',
       student_id TEXT,
       department TEXT,
       is_bup_verified INTEGER NOT NULL DEFAULT 0,
@@ -109,6 +109,9 @@ function migrate(db: DatabaseSync) {
     CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
     CREATE INDEX IF NOT EXISTS idx_orders_buyer ON orders(buyer_id);
     CREATE INDEX IF NOT EXISTS idx_order_items_seller ON order_items(seller_id);
+
+    -- Unified accounts: upgrade any existing BUYER rows so all accounts have buy & sell capabilities
+    UPDATE users SET role = 'SELLER', store_name = COALESCE(store_name, name || '''s Stall') WHERE role = 'BUYER';
   `)
 }
 

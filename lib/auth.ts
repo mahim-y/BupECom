@@ -87,7 +87,12 @@ export async function getSession(): Promise<SessionUser | null> {
 export async function requireUser(roles?: Role[]) {
   const user = await getSession()
   if (!user) throw new Error('Unauthorized')
+  // Unified accounts: all authenticated users can buy and sell.
+  // Allow any authenticated user unless a strict ADMIN-only role is specified.
   if (roles && !roles.includes(user.role) && user.role !== 'ADMIN') {
+    if (roles.includes('SELLER') || roles.includes('BUYER')) {
+      return user
+    }
     throw new Error('Forbidden')
   }
   return user

@@ -9,7 +9,6 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
   await ensureSeeded()
   const user = await getSession()
   if (!user) redirect('/login')
-  if (user.role !== 'SELLER' && user.role !== 'ADMIN') redirect('/sell')
 
   const { id } = await params
   const product = getProduct(id)

@@ -6,7 +6,7 @@ import { Store, Zap, ShieldCheck, DollarSign, Package, Users } from 'lucide-reac
 
 export default async function SellPage() {
   const user = await getSession()
-  if (user?.role === 'SELLER' || user?.role === 'ADMIN') redirect('/seller')
+  if (user) redirect('/seller')
 
   return (
     <div className="bg-[#FAF5E9] text-[#392525]">
@@ -33,16 +33,16 @@ export default async function SellPage() {
           {!user && (
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
-                href="/register?as=seller"
+                href="/register?redirect=/seller"
                 className="rounded-full bg-[#E3E890] px-6 py-3.5 text-sm font-semibold text-[#392525] shadow-lg transition hover:bg-[#d5dc74]"
               >
-                Open Free Seller Account
+                Create Campus Account
               </Link>
               <Link
                 href="/login?redirect=/seller"
                 className="rounded-full border border-white/50 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
               >
-                Already have a store? Sign in
+                Already have an account? Sign in
               </Link>
             </div>
           )}
@@ -128,10 +128,10 @@ export default async function SellPage() {
               <p className="mt-2 text-sm text-[#3E4734]">Registration takes less than two minutes.</p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <Link
-                  href="/register?as=seller"
+                  href="/register?redirect=/seller"
                   className="rounded-full bg-[#392525] px-6 py-3 text-sm font-semibold text-[#FAF5E9] shadow-md transition hover:bg-[#213527]"
                 >
-                  Register as a Seller
+                  Create Unified Account
                 </Link>
                 <Link
                   href="/login?redirect=/seller"

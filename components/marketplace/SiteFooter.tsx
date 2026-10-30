@@ -114,8 +114,8 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/register?as=seller" className="hover:text-[#B25D3E] transition">
-                  Register Seller Account
+                <Link href="/register" className="hover:text-[#B25D3E] transition">
+                  Create Campus Account
                 </Link>
               </li>
             </ul>

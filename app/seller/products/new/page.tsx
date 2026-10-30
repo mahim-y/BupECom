@@ -5,8 +5,7 @@ import { ProductForm } from '@/components/marketplace/ProductForm'
 
 export default async function NewProductPage() {
   const user = await getSession()
-  if (!user) redirect('/login')
-  if (user.role !== 'SELLER' && user.role !== 'ADMIN') redirect('/sell')
+  if (!user) redirect('/login?redirect=/seller/products/new')
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">

@@ -11,8 +11,7 @@ import { Package, ShoppingBag, DollarSign, Plus, ExternalLink, Trash2, Edit } fr
 export default async function SellerDashboardPage() {
   await ensureSeeded()
   const user = await getSession()
-  if (!user) redirect('/login')
-  if (user.role !== 'SELLER' && user.role !== 'ADMIN') redirect('/sell')
+  if (!user) redirect('/login?redirect=/seller')
 
   const dbUser = findUserById(user.id)
   const products = listProducts({ sellerId: user.id, activeOnly: false })

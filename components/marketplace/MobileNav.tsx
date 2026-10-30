@@ -49,9 +49,9 @@ export function MobileNav({ user }: MobileNavProps) {
               </div>
               <div className="mt-3 flex items-center justify-between border-t border-[rgba(57,37,37,0.08)] pt-2 text-xs">
                 <span className="rounded-full bg-[#E3E890]/60 px-2.5 py-0.5 font-medium text-[#392525]">
-                  {user.role} {user.storeName ? `· ${user.storeName}` : ''}
+                  {user.storeName ? user.storeName : 'Campus Account'}
                 </span>
-                <span className="text-[#3E4734]">Verified Campus Account</span>
+                <span className="text-[#3E4734]">Buyer &amp; Seller</span>
               </div>
             </div>
           )}
@@ -88,7 +88,7 @@ export function MobileNav({ user }: MobileNavProps) {
               <ArrowRight className="h-4 w-4 text-[#728383]" />
             </Link>
 
-            {isSeller ? (
+            {user ? (
               <Link
                 href="/seller"
                 onClick={() => setIsOpen(false)}
@@ -96,7 +96,7 @@ export function MobileNav({ user }: MobileNavProps) {
               >
                 <div className="flex items-center gap-3">
                   <Store className="h-5 w-5 text-[#B25D3E]" />
-                  <span>Seller Hub & Dashboard</span>
+                  <span>Seller Hub &amp; Dashboard</span>
                 </div>
                 <ArrowRight className="h-4 w-4 text-[#728383]" />
               </Link>

@@ -10,8 +10,7 @@ import { ArrowLeft, Clock, MapPin, Package, Phone, CheckCircle2 } from 'lucide-r
 export default async function SellerOrdersPage() {
   await ensureSeeded()
   const user = await getSession()
-  if (!user) redirect('/login')
-  if (user.role !== 'SELLER' && user.role !== 'ADMIN') redirect('/sell')
+  if (!user) redirect('/login?redirect=/seller/orders')
 
   const orders = listSellerOrders(user.id)
 
