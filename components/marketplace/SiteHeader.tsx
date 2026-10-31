@@ -18,42 +18,30 @@ export async function SiteHeader() {
         </div>
 
         <nav className="hidden items-center gap-6 text-sm font-medium text-[#3E4734] md:flex">
-          <Link href="/shop" className="transition hover:text-[#B25D3E]">
-            Shop
+          <Link href="/buyer" className="transition hover:text-[#B25D3E]">
+            Buyer Market
           </Link>
           <Link href="/#stalls" className="transition hover:text-[#B25D3E]">
-            Stalls
+            Lake Stalls
           </Link>
-          {user ? (
-            <>
-              <Link
-                href="/seller"
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#392525]/10 px-3 py-1 text-xs font-semibold text-[#392525] transition hover:bg-[#392525]/20"
-              >
-                Seller Hub
-              </Link>
-              <Link href="/orders" className="transition hover:text-[#B25D3E]">
-                Orders
-              </Link>
-            </>
-          ) : (
-            <Link href="/sell" className="transition hover:text-[#B25D3E]">
-              Sell on Nest
-            </Link>
-          )}
+          <Link
+            href="/seller"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#392525]/10 px-3 py-1 text-xs font-semibold text-[#392525] transition hover:bg-[#392525]/20"
+          >
+            Seller Studio
+          </Link>
         </nav>
 
         <div className="flex items-center gap-3">
           <CartBadge />
           {user ? (
             <div className="hidden items-center gap-3 sm:flex">
-              <Link
-                href="/orders"
-                className="max-w-[140px] truncate text-sm font-medium text-[#3E4734] hover:text-[#392525]"
-                title="My Orders"
+              <span
+                className="max-w-[140px] truncate text-sm font-medium text-[#3E4734]"
+                title={user.name}
               >
                 {user.name}
-              </Link>
+              </span>
               <form action={logoutAction}>
                 <button
                   type="submit"

@@ -32,10 +32,10 @@ export function CheckoutForm({ user }: { user: UserProp }) {
         <h1 className="font-serif text-3xl text-[#392525]">Your bag is empty</h1>
         <p className="mt-2 text-sm text-[#3E4734]">Add items from the campus catalog to proceed with checkout.</p>
         <Link
-          href="/shop"
+          href="/buyer"
           className="mt-6 inline-block rounded-full bg-[#392525] px-6 py-3 text-sm font-semibold text-[#FAF5E9]"
         >
-          Explore Shop
+          Explore Buyer Market
         </Link>
       </div>
     )

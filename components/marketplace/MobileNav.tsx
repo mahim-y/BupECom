@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Menu, X, Store, ShoppingBag, Package, User, LogOut, ArrowRight } from 'lucide-react'
+import { Menu, X, Store, ShoppingBag, User, LogOut, ArrowRight } from 'lucide-react'
 import { logoutAction } from '@/lib/actions/auth'
 
 type MobileNavProps = {
@@ -66,13 +66,13 @@ export function MobileNav({ user }: MobileNavProps) {
               <ArrowRight className="h-4 w-4 text-[#728383]" />
             </Link>
             <Link
-              href="/shop"
+              href="/buyer"
               onClick={() => setIsOpen(false)}
               className="flex items-center justify-between rounded-xl p-3 hover:bg-[rgba(57,37,37,0.06)]"
             >
               <div className="flex items-center gap-3">
                 <ShoppingBag className="h-5 w-5 text-[#B25D3E]" />
-                <span>Shop Catalog</span>
+                <span>Buyer Market</span>
               </div>
               <ArrowRight className="h-4 w-4 text-[#728383]" />
             </Link>
@@ -88,45 +88,17 @@ export function MobileNav({ user }: MobileNavProps) {
               <ArrowRight className="h-4 w-4 text-[#728383]" />
             </Link>
 
-            {user ? (
-              <Link
-                href="/seller"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center justify-between rounded-xl bg-[#392525]/5 p-3 hover:bg-[rgba(57,37,37,0.08)]"
-              >
-                <div className="flex items-center gap-3">
-                  <Store className="h-5 w-5 text-[#B25D3E]" />
-                  <span>Seller Hub &amp; Dashboard</span>
-                </div>
-                <ArrowRight className="h-4 w-4 text-[#728383]" />
-              </Link>
-            ) : (
-              <Link
-                href="/sell"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center justify-between rounded-xl p-3 hover:bg-[rgba(57,37,37,0.06)]"
-              >
-                <div className="flex items-center gap-3">
-                  <Store className="h-5 w-5 text-[#B25D3E]" />
-                  <span>Sell on Nest</span>
-                </div>
-                <ArrowRight className="h-4 w-4 text-[#728383]" />
-              </Link>
-            )}
-
-            {user && (
-              <Link
-                href="/orders"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center justify-between rounded-xl p-3 hover:bg-[rgba(57,37,37,0.06)]"
-              >
-                <div className="flex items-center gap-3">
-                  <Package className="h-5 w-5 text-[#392525]" />
-                  <span>My Orders</span>
-                </div>
-                <ArrowRight className="h-4 w-4 text-[#728383]" />
-              </Link>
-            )}
+            <Link
+              href="/seller"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center justify-between rounded-xl bg-[#392525]/5 p-3 hover:bg-[rgba(57,37,37,0.08)]"
+            >
+              <div className="flex items-center gap-3">
+                <Store className="h-5 w-5 text-[#B25D3E]" />
+                <span>Seller Studio</span>
+              </div>
+              <ArrowRight className="h-4 w-4 text-[#728383]" />
+            </Link>
           </nav>
 
           <div className="mt-auto border-t border-[rgba(57,37,37,0.12)] pt-6">

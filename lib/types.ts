@@ -28,6 +28,7 @@ export interface Product {
   inStock: boolean
   tag?: string
   deliveryTime: string
+  mealType?: 'Breakfast' | 'Lunch' | 'Snacks'
 }
 
 export interface Stall {

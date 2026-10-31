@@ -27,6 +27,7 @@ export async function GET(request: Request) {
       inStock: !!p.in_stock,
       tag: p.tag ?? undefined,
       deliveryTime: p.delivery_time,
+      mealType: (p as any).meal_type || undefined,
     }))
   )
 }

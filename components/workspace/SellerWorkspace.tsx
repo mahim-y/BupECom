@@ -19,7 +19,9 @@ import {
   ShoppingCart,
   Clock,
   Layers,
-  X
+  X,
+  Zap,
+  Users
 } from 'lucide-react'
 import { Product, Stall } from '@/lib/types'
 import { useWorkspace } from './WorkspaceContext'
@@ -32,8 +34,8 @@ interface SellerWorkspaceProps {
   onDeleteProduct: (productId: string) => void
   onToggleStock: (productId: string) => void
   onSelectStallForBooking: (stall: Stall) => void
-  activeSubTab?: 'listings' | 'stalls' | 'guidelines'
-  onSubTabChange?: (tab: 'listings' | 'stalls' | 'guidelines') => void
+  activeSubTab?: 'overview' | 'listings' | 'stalls' | 'guidelines'
+  onSubTabChange?: (tab: 'overview' | 'listings' | 'stalls' | 'guidelines') => void
   onOpenCart?: () => void
   cartCount?: number
 }
@@ -51,10 +53,10 @@ export function SellerWorkspace({
   cartCount = 0,
 }: SellerWorkspaceProps) {
   const { setActiveTab } = useWorkspace()
-  const [internalSubTab, setInternalSubTab] = useState<'listings' | 'stalls' | 'guidelines'>('listings')
+  const [internalSubTab, setInternalSubTab] = useState<'overview' | 'listings' | 'stalls' | 'guidelines'>('overview')
 
   const activeSubTab = controlledSubTab ?? internalSubTab
-  const setActiveSubTab = (tab: 'listings' | 'stalls' | 'guidelines') => {
+  const setActiveSubTab = (tab: 'overview' | 'listings' | 'stalls' | 'guidelines') => {
     if (onSubTabChange) onSubTabChange(tab)
     setInternalSubTab(tab)
   }
@@ -115,26 +117,35 @@ export function SellerWorkspace({
         <div className="absolute top-1/2 right-1/4 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl" />
       </div>
 
-      {/* SELLER STUDIO HERO HEADER */}
-      <section className="relative border-b border-white/10 bg-gradient-to-b from-[#080d0a] via-[#0e1711] to-[#0e1711] px-4 py-8 text-[#FAF5E9] sm:px-8 sm:py-12">
-        <div className="mx-auto max-w-7xl">
+      {/* SELLER STUDIO HERO HEADER (MERGED WITH /SELL HERO) */}
+      <section className="relative border-b border-white/10 bg-[#080d0a] px-4 py-8 text-[#FAF5E9] sm:px-8 sm:py-12 overflow-hidden">
+        {/* Background Image Overlay from /sell */}
+        <div
+          className="absolute inset-0 bg-cover bg-center pointer-events-none opacity-20"
+          style={{
+            backgroundImage:
+              "linear-gradient(120deg, rgba(8,13,10,0.94), rgba(20,31,23,0.85)), url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=1600&q=80')",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-7xl">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E3E890] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#141f17] shadow-sm">
                   <Store className="size-3.5" />
-                  Seller Studio
+                  BUP Multi-Vendor Marketplace
                 </span>
                 <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white/80 border border-white/10">
-                  Campus Merchant Portal
+                  Seller Studio
                 </span>
               </div>
 
-              <h1 className="mt-3 font-serif text-3xl font-bold tracking-tight text-white sm:text-5xl">
-                BUP <em className="text-[#E3E890] not-italic">Merchant Studio</em>
+              <h1 className="mt-3 font-serif text-3xl font-bold tracking-tight text-white sm:text-5xl max-w-3xl leading-tight">
+                Open your store. <em className="text-[#E3E890] not-italic">Sell to thousands</em> across campus.
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#FAF5E9]/80 sm:text-base">
-                List campus merchandise, monitor student sales, fulfill delivery handovers, and manage lakeside pop-up stalls in real time.
+                Whether you are a student entrepreneur selling batch merch, a campus canteen vendor, an academic society trading textbooks, or an independent tech hobbyist — BUP Nest makes selling seamless.
               </p>
             </div>
 
@@ -146,6 +157,14 @@ export function SellerWorkspace({
               >
                 <Plus className="size-4" />
                 <span>+ List New Product</span>
+              </button>
+
+              <button
+                onClick={() => setActiveSubTab('stalls')}
+                className="inline-flex items-center gap-2 rounded-full border border-[#E3E890]/40 bg-[#E3E890]/10 px-4 py-2.5 text-xs font-semibold text-[#E3E890] shadow-sm transition hover:bg-[#E3E890]/20 active:scale-95 cursor-pointer"
+              >
+                <MapPin className="size-4" />
+                <span>Book Lakefront Stall</span>
               </button>
 
               <button
@@ -215,10 +234,21 @@ export function SellerWorkspace({
       {/* SELLER CONTROL TABS */}
       <section className="sticky top-[58px] z-30 border-b border-white/10 bg-[#0e1711]/95 backdrop-blur-md px-4 py-3 sm:px-8">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto">
+            <button
+              onClick={() => setActiveSubTab('overview')}
+              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                activeSubTab === 'overview'
+                  ? 'bg-[#E3E890] text-[#141f17] shadow-sm font-bold'
+                  : 'text-white/70 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              Seller Hub &amp; Benefits
+            </button>
+
             <button
               onClick={() => setActiveSubTab('listings')}
-              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all ${
+              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                 activeSubTab === 'listings'
                   ? 'bg-[#E3E890] text-[#141f17] shadow-sm font-bold'
                   : 'text-white/70 hover:bg-white/10 hover:text-white'
@@ -229,7 +259,7 @@ export function SellerWorkspace({
 
             <button
               onClick={() => setActiveSubTab('stalls')}
-              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all ${
+              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                 activeSubTab === 'stalls'
                   ? 'bg-[#E3E890] text-[#141f17] shadow-sm font-bold'
                   : 'text-white/70 hover:bg-white/10 hover:text-white'
@@ -240,7 +270,7 @@ export function SellerWorkspace({
 
             <button
               onClick={() => setActiveSubTab('guidelines')}
-              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all ${
+              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                 activeSubTab === 'guidelines'
                   ? 'bg-[#E3E890] text-[#141f17] shadow-sm font-bold'
                   : 'text-white/70 hover:bg-white/10 hover:text-white'
@@ -252,13 +282,170 @@ export function SellerWorkspace({
 
           <button
             onClick={() => setIsNewProductModalOpen(true)}
-            className="hidden items-center gap-1.5 rounded-full bg-[#E3E890] px-4 py-1.5 text-xs font-bold text-[#141f17] shadow-sm hover:bg-white transition sm:inline-flex"
+            className="hidden items-center gap-1.5 rounded-full bg-[#E3E890] px-4 py-1.5 text-xs font-bold text-[#141f17] shadow-sm hover:bg-white transition sm:inline-flex cursor-pointer shrink-0"
           >
             <Plus className="size-3.5" />
             <span>Add Item</span>
           </button>
         </div>
       </section>
+
+      {/* SUB-TAB 0: MERGED /SELL BENEFITS & FEATURES */}
+      {activeSubTab === 'overview' && (
+        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-8 relative space-y-10">
+          {/* Main 2-column Benefits and Campus Delivery Grid */}
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] items-start">
+            {/* Why Sell on BUP Nest */}
+            <div className="rounded-3xl border border-white/15 bg-white/[0.04] p-6 sm:p-8 backdrop-blur-md shadow-2xl">
+              <span className="rounded-full bg-[#E3E890]/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#E3E890]">
+                Ecosystem Perks
+              </span>
+              <h2 className="mt-3 font-serif text-2xl font-bold text-white sm:text-3xl">
+                Why sell on BUP Nest?
+              </h2>
+              <p className="mt-1 text-xs text-white/70">
+                Tailored specifically for student merchants, cafeteria vendors, and club organizers.
+              </p>
+
+              <ul className="mt-6 space-y-4 text-xs sm:text-sm text-white/80">
+                <li className="flex items-start gap-3.5">
+                  <div className="grid size-8 place-items-center rounded-xl bg-amber-500/20 text-[#E3E890] shrink-0 border border-amber-500/30">
+                    <Zap className="size-4" />
+                  </div>
+                  <div>
+                    <strong className="text-white block font-semibold text-sm">Direct Campus Audience</strong>
+                    <span>Over 8,000 students, faculty members, and cantonment visitors browsing products every single day.</span>
+                  </div>
+                </li>
+
+                <li className="flex items-start gap-3.5">
+                  <div className="grid size-8 place-items-center rounded-xl bg-emerald-500/20 text-emerald-300 shrink-0 border border-emerald-500/30">
+                    <DollarSign className="size-4" />
+                  </div>
+                  <div>
+                    <strong className="text-white block font-semibold text-sm">Zero Setup Fees</strong>
+                    <span>100% free store setup, full inventory autonomy, and real-time sales metrics without hidden fees.</span>
+                  </div>
+                </li>
+
+                <li className="flex items-start gap-3.5">
+                  <div className="grid size-8 place-items-center rounded-xl bg-sky-500/20 text-sky-300 shrink-0 border border-sky-500/30">
+                    <Package className="size-4" />
+                  </div>
+                  <div>
+                    <strong className="text-white block font-semibold text-sm">Order &amp; Handover Tracking</strong>
+                    <span>Receive buyer contact numbers, student ID verification, and selected campus delivery points.</span>
+                  </div>
+                </li>
+
+                <li className="flex items-start gap-3.5">
+                  <div className="grid size-8 place-items-center rounded-xl bg-teal-500/20 text-teal-300 shrink-0 border border-teal-500/30">
+                    <ShieldCheck className="size-4" />
+                  </div>
+                  <div>
+                    <strong className="text-white block font-semibold text-sm">Flexible Payments</strong>
+                    <span>Support Cash on Delivery (COD), instant bKash, and Nagad order checkout options seamlessly.</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            {/* Right Column: Campus Delivery Spots & Quick Action */}
+            <div className="space-y-6">
+              <div className="rounded-3xl border border-white/15 bg-white/[0.04] p-6 backdrop-blur-md shadow-2xl">
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white/90">
+                  Campus Handover Points
+                </span>
+                <h3 className="mt-3 font-serif text-xl font-bold text-white">
+                  Designated Campus Delivery Spots
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-white/70">
+                  Meet student buyers conveniently between classes at verified campus landmarks:
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                  <span className="rounded-xl border border-white/15 bg-white/[0.06] px-3 py-1.5 text-white/90 font-medium">
+                    📍 Vista Cafeteria
+                  </span>
+                  <span className="rounded-xl border border-white/15 bg-white/[0.06] px-3 py-1.5 text-white/90 font-medium">
+                    📍 FST Faculty Atrium
+                  </span>
+                  <span className="rounded-xl border border-white/15 bg-white/[0.06] px-3 py-1.5 text-white/90 font-medium">
+                    📍 FBS Concourse
+                  </span>
+                  <span className="rounded-xl border border-white/15 bg-white/[0.06] px-3 py-1.5 text-white/90 font-medium">
+                    📍 Monpura Lake Pavilion
+                  </span>
+                  <span className="rounded-xl border border-white/15 bg-white/[0.06] px-3 py-1.5 text-white/90 font-medium">
+                    📍 Central Library Ground Floor
+                  </span>
+                </div>
+              </div>
+
+              {/* Ready to List Prompt */}
+              <div className="rounded-3xl border border-[#E3E890]/30 bg-gradient-to-br from-[#142318] to-[#0e1711] p-6 shadow-xl text-white">
+                <span className="rounded-full bg-[#E3E890] px-3 py-1 text-xs font-bold text-[#141f17] uppercase tracking-wider">
+                  Instant Listing
+                </span>
+                <h3 className="mt-3 font-serif text-xl font-bold text-white">
+                  Ready to add your next item?
+                </h3>
+                <p className="mt-1 text-xs text-white/70 leading-relaxed">
+                  List items with photos, prices, and delivery terms in under 30 seconds.
+                </p>
+                <button
+                  onClick={() => setIsNewProductModalOpen(true)}
+                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#E3E890] px-5 py-2.5 text-xs font-bold text-[#141f17] shadow-lg hover:bg-white transition cursor-pointer"
+                >
+                  <Plus className="size-4" />
+                  <span>List New Product Now</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Everything you need to run your varsity business (The 3 Pillars from /sell) */}
+          <div>
+            <h3 className="text-center font-serif text-2xl font-bold text-white sm:text-3xl">
+              Everything you need to run your varsity business
+            </h3>
+            <p className="text-center text-xs text-white/60 mt-1 max-w-lg mx-auto">
+              Empowering student merchants, society merchandise leads, and local campus stalls.
+            </p>
+
+            <div className="mt-8 grid gap-5 sm:grid-cols-3">
+              <div className="rounded-3xl border border-white/15 bg-white/[0.04] p-6 shadow-xl backdrop-blur-md hover:border-[#E3E890]/30 transition-all">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-[#E3E890]/20 text-[#E3E890] border border-[#E3E890]/30">
+                  <Store className="size-6" />
+                </div>
+                <h4 className="mt-4 font-serif text-lg font-bold text-white">Branded Storefront</h4>
+                <p className="mt-2 text-xs leading-relaxed text-white/70">
+                  Showcase products with your store name, seller category badge, and authentic peer reviews from verified students.
+                </p>
+              </div>
+
+              <div className="rounded-3xl border border-white/15 bg-white/[0.04] p-6 shadow-xl backdrop-blur-md hover:border-[#E3E890]/30 transition-all">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-[#E3E890]/20 text-[#E3E890] border border-[#E3E890]/30">
+                  <Users className="size-6" />
+                </div>
+                <h4 className="mt-4 font-serif text-lg font-bold text-white">Instant Student Reach</h4>
+                <p className="mt-2 text-xs leading-relaxed text-white/70">
+                  Promote batch hoodies, club merchandise, academic notes drives, and lakeside festival stall tickets campus-wide.
+                </p>
+              </div>
+
+              <div className="rounded-3xl border border-white/15 bg-white/[0.04] p-6 shadow-xl backdrop-blur-md hover:border-[#E3E890]/30 transition-all">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-[#E3E890]/20 text-[#E3E890] border border-[#E3E890]/30">
+                  <Package className="size-6" />
+                </div>
+                <h4 className="mt-4 font-serif text-lg font-bold text-white">Live Order Manager</h4>
+                <p className="mt-2 text-xs leading-relaxed text-white/70">
+                  Toggle stock availability in real time, view incoming buyer requests, and manage seamless handover confirmations.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* SUB-TAB 1: PRODUCT LISTINGS MANAGER */}
       {activeSubTab === 'listings' && (

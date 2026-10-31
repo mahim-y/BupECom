@@ -9,7 +9,7 @@ import { Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react'
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectUrl = searchParams.get('redirect') || '/shop'
+  const redirectUrl = searchParams.get('redirect') || '/'
 
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -22,7 +22,7 @@ function LoginForm() {
         Access your buyer cart, track campus orders, or manage your seller hub.
       </p>
 
-      {redirectUrl && redirectUrl !== '/shop' && (
+      {redirectUrl && redirectUrl !== '/' && (
         <div className="mt-4 rounded-xl border border-[#B25D3E]/30 bg-[#B25D3E]/10 p-3 text-xs text-[#392525]">
           Please sign in to continue to your requested page.
         </div>

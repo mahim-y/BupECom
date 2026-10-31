@@ -42,8 +42,7 @@ export async function createProductAction(formData: FormData): Promise<ActionRes
       tag: parsed.data.tag ?? null,
     })
 
-    revalidatePath('/seller')
-    revalidatePath('/shop')
+    revalidatePath('/buyer')
     revalidatePath('/')
     return { ok: true, id: product.id }
   } catch {
@@ -76,8 +75,8 @@ export async function updateProductAction(productId: string, formData: FormData)
     if (!updated) return { ok: false, error: 'Product not found' }
 
     revalidatePath('/seller')
-    revalidatePath(`/product/${productId}`)
-    revalidatePath('/shop')
+    revalidatePath('/buyer')
+    revalidatePath('/')
     return { ok: true, id: productId }
   } catch {
     return { ok: false, error: 'Unable to update product' }
@@ -90,7 +89,8 @@ export async function deleteProductAction(productId: string): Promise<ActionResu
     const ok = deleteProduct(productId, user.id)
     if (!ok) return { ok: false, error: 'Product not found' }
     revalidatePath('/seller')
-    revalidatePath('/shop')
+    revalidatePath('/buyer')
+    revalidatePath('/')
     return { ok: true }
   } catch {
     return { ok: false, error: 'Unable to delete product' }
@@ -114,8 +114,8 @@ export async function submitReviewAction(productId: string, formData: FormData):
       comment: comment || undefined,
     })
 
-    revalidatePath(`/product/${productId}`)
-    revalidatePath('/shop')
+    revalidatePath('/buyer')
+    revalidatePath('/')
     return { ok: true }
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Unable to submit review'

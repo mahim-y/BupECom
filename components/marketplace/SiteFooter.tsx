@@ -67,28 +67,18 @@ export function SiteFooter() {
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#728383]">Marketplace</p>
             <ul className="mt-3 space-y-2 text-sm text-[#3E4734]">
               <li>
-                <Link href="/shop" className="hover:text-[#B25D3E] transition">
-                  Browse All Products
+                <Link href="/" className="hover:text-[#B25D3E] transition">
+                  Campus Hub
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=Merch" className="hover:text-[#B25D3E] transition">
-                  Varsity Apparel & Merch
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=Textbooks" className="hover:text-[#B25D3E] transition">
-                  Academic Textbooks & Notes
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=Dining%20%26%20Canteen" className="hover:text-[#B25D3E] transition">
-                  Dining & Canteen Delights
+                <Link href="/buyer" className="hover:text-[#B25D3E] transition">
+                  Buyer Market
                 </Link>
               </li>
               <li>
                 <Link href="/#stalls" className="hover:text-[#B25D3E] transition">
-                  Lake Waterfront Stalls
+                  Monpura Lake Stalls
                 </Link>
               </li>
             </ul>
@@ -96,26 +86,26 @@ export function SiteFooter() {
 
           {/* Seller Ecosystem */}
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#728383]">Sell & Partner</p>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#728383]">Seller Ecosystem</p>
             <ul className="mt-3 space-y-2 text-sm text-[#3E4734]">
               <li>
-                <Link href="/sell" className="hover:text-[#B25D3E] transition">
-                  Become a Seller
-                </Link>
-              </li>
-              <li>
                 <Link href="/seller" className="hover:text-[#B25D3E] transition">
-                  Seller Hub & Inventory
+                  Seller Studio
                 </Link>
               </li>
               <li>
-                <Link href="/seller/orders" className="hover:text-[#B25D3E] transition">
-                  Fulfill Customer Orders
+                <Link href="/#stalls" className="hover:text-[#B25D3E] transition">
+                  Book Lakefront Stall
                 </Link>
               </li>
               <li>
                 <Link href="/register" className="hover:text-[#B25D3E] transition">
                   Create Campus Account
+                </Link>
+              </li>
+              <li>
+                <Link href="/login" className="hover:text-[#B25D3E] transition">
+                  Sign In
                 </Link>
               </li>
             </ul>
@@ -148,14 +138,14 @@ export function SiteFooter() {
         <div className="mt-12 flex flex-col items-center justify-between border-t border-[rgba(57,37,37,0.1)] pt-6 text-xs text-[#728383] sm:flex-row">
           <p>© {new Date().getFullYear()} BUP Nest Marketplace. Built for the BUP Campus Community.</p>
           <div className="mt-3 flex items-center gap-4 sm:mt-0">
-            <Link href="/shop" className="hover:underline">
-              Catalog
+            <Link href="/" className="hover:underline">
+              Campus Hub
             </Link>
-            <Link href="/sell" className="hover:underline">
-              Sell
+            <Link href="/buyer" className="hover:underline">
+              Buyer Market
             </Link>
-            <Link href="/orders" className="hover:underline">
-              Orders
+            <Link href="/seller" className="hover:underline">
+              Seller Studio
             </Link>
           </div>
         </div>

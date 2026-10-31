@@ -26,30 +26,32 @@ import {
 
 import Link from 'next/link'
 import { Product, Stall, CampusEvent } from '@/lib/types'
-import { STALLS, CAMPUS_EVENTS } from '@/lib/mock-data'
+import { PRODUCTS, STALLS, CAMPUS_EVENTS } from '@/lib/mock-data'
 import { BottomDock } from '@/components/bup/BottomDock'
 import { SearchModal } from '@/components/bup/SearchModal'
 import { StallBookingModal } from '@/components/bup/StallBookingModal'
 import { ProductQuickViewModal } from '@/components/bup/ProductQuickViewModal'
 import { CampusEventsModal } from '@/components/bup/CampusEventsModal'
 import { CampusMapModal } from '@/components/bup/CampusMapModal'
+import { CartDrawer } from '@/components/bup/CartDrawer'
 import { useCart } from '@/components/marketplace/CartProvider'
 import { useWorkspace } from '@/components/workspace/WorkspaceContext'
 import { BuyerWorkspace } from '@/components/workspace/BuyerWorkspace'
 import { SellerWorkspace } from '@/components/workspace/SellerWorkspace'
 
 export default function Page() {
-  const { addItem, count: totalCartCount } = useCart()
+  const { items: cartItems, addItem, updateQty, removeItem, clear: clearCart, count: totalCartCount } = useCart()
   const { activeTab, setActiveTab, tabIndex, isTransitioning } = useWorkspace()
 
-  const [productsList, setProductsList] = useState<Product[]>([])
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const [productsList, setProductsList] = useState<Product[]>(PRODUCTS)
   const [stallsList, setStallsList] = useState<Stall[]>(STALLS)
   const [eventsList] = useState<CampusEvent[]>(CAMPUS_EVENTS)
 
   const [selectedStall, setSelectedStall] = useState<Stall | null>(null)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [activeSection, setActiveSection] = useState<string>('top')
-  const [sellerSubTab, setSellerSubTab] = useState<'listings' | 'stalls' | 'guidelines'>('listings')
+  const [sellerSubTab, setSellerSubTab] = useState<'overview' | 'listings' | 'stalls' | 'guidelines'>('overview')
 
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isEventsOpen, setIsEventsOpen] = useState(false)
@@ -624,9 +626,7 @@ export default function Page() {
               products={productsList}
               onAddToCart={handleAddToCart}
               onQuickView={(p) => setSelectedProduct(p)}
-              onOpenCart={() => {
-                window.location.href = '/cart'
-              }}
+              onOpenCart={() => setIsCartOpen(true)}
               cartCount={totalCartCount}
             />
           </div>
@@ -652,9 +652,7 @@ export default function Page() {
               onSelectStallForBooking={(s) => setSelectedStall(s)}
               activeSubTab={sellerSubTab}
               onSubTabChange={(t) => setSellerSubTab(t)}
-              onOpenCart={() => {
-                window.location.href = '/cart'
-              }}
+              onOpenCart={() => setIsCartOpen(true)}
               cartCount={totalCartCount}
             />
           </div>
@@ -715,6 +713,44 @@ export default function Page() {
       <CampusMapModal
         isOpen={isMapOpen}
         onClose={() => setIsMapOpen(false)}
+      />
+
+      {/* IN-APP CART DRAWER (Replaces standalone /cart and /checkout) */}
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        items={cartItems.map((line) => {
+          const match = productsList.find((p) => p.id === line.productId)
+          return {
+            product: match || {
+              id: line.productId,
+              name: line.name,
+              price: line.price,
+              image: line.image,
+              seller: line.sellerName,
+              rating: 5.0,
+              reviewsCount: 1,
+              category: 'Merch',
+              sellerType: 'Student Vendor',
+              description: 'Campus marketplace product',
+              inStock: true,
+              deliveryTime: 'Campus Delivery',
+            },
+            quantity: line.quantity,
+          }
+        })}
+        onUpdateQuantity={(pid, delta) => {
+          const current = cartItems.find((i) => i.productId === pid)?.quantity || 1
+          const next = current + delta
+          if (next <= 0) removeItem(pid)
+          else updateQty(pid, next)
+        }}
+        onRemoveItem={(pid) => removeItem(pid)}
+        onClearCart={() => clearCart()}
+        currentUser={null}
+        onOpenAuth={() => {
+          window.location.href = '/login'
+        }}
       />
 
     </div>

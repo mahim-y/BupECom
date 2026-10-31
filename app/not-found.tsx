@@ -14,26 +14,26 @@ export default function NotFound() {
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Link
-          href="/shop"
+          href="/buyer"
           className="inline-flex items-center gap-2 rounded-full bg-[#392525] px-6 py-3 text-sm font-semibold text-[#FAF5E9] shadow-md transition hover:bg-[#213527]"
         >
           <ShoppingBag className="h-4 w-4" />
-          <span>Browse Products</span>
+          <span>Browse Buyer Market</span>
         </Link>
         <Link
           href="/"
           className="inline-flex items-center gap-2 rounded-full border border-[rgba(57,37,37,0.2)] bg-white/70 px-6 py-3 text-sm font-semibold text-[#392525] transition hover:bg-white"
         >
           <ArrowLeft className="h-4 w-4" />
-          <span>Back to Home</span>
+          <span>Back to Campus Hub</span>
         </Link>
       </div>
 
       <div className="mt-12 rounded-2xl border border-[rgba(57,37,37,0.1)] bg-white/40 p-5 text-xs text-[#728383]">
         <p>Looking for a specific club stall or department merchandise?</p>
-        <Link href="/shop" className="mt-1 inline-flex items-center gap-1 font-medium text-[#B25D3E] underline">
+        <Link href="/buyer" className="mt-1 inline-flex items-center gap-1 font-medium text-[#B25D3E] underline">
           <Search className="h-3.5 w-3.5" />
-          <span>Search the full catalog</span>
+          <span>Search in Buyer Market</span>
         </Link>
       </div>
     </div>

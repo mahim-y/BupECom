@@ -55,6 +55,7 @@ function migrate(db: DatabaseSync) {
       rating REAL NOT NULL DEFAULT 0,
       reviews_count INTEGER NOT NULL DEFAULT 0,
       is_active INTEGER NOT NULL DEFAULT 1,
+      meal_type TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       updated_at TEXT NOT NULL DEFAULT (datetime('now')),
       FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
@@ -113,6 +114,10 @@ function migrate(db: DatabaseSync) {
     -- Unified accounts: upgrade any existing BUYER rows so all accounts have buy & sell capabilities
     UPDATE users SET role = 'SELLER', store_name = COALESCE(store_name, name || '''s Stall') WHERE role = 'BUYER';
   `)
+
+  try {
+    db.exec('ALTER TABLE products ADD COLUMN meal_type TEXT;')
+  } catch {}
 }
 
 export function cuid() {
@@ -157,6 +162,7 @@ export type DbProduct = {
   rating: number
   reviews_count: number
   is_active: number
+  meal_type: string | null
   created_at: string
   updated_at: string
 }

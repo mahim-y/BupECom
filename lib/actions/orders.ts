@@ -71,9 +71,9 @@ export async function placeOrderAction(payload: unknown): Promise<CheckoutResult
       items: lineItems,
     })
 
-    revalidatePath('/orders')
-    revalidatePath('/seller/orders')
-    revalidatePath('/shop')
+    revalidatePath('/')
+    revalidatePath('/buyer')
+    revalidatePath('/seller')
     return { ok: true, orderId: order.id, orderNumber: order.order_number }
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Checkout failed'
@@ -89,8 +89,8 @@ export async function updateSellerOrderStatusAction(orderId: string, status: str
     if (!allowed.includes(status)) return { ok: false as const, error: 'Invalid status' }
     const ok = updateOrderStatus(orderId, user.id, status)
     if (!ok) return { ok: false as const, error: 'Order not found' }
-    revalidatePath('/seller/orders')
-    revalidatePath('/orders')
+    revalidatePath('/seller')
+    revalidatePath('/')
     return { ok: true as const }
   } catch {
     return { ok: false as const, error: 'Unable to update order' }
@@ -102,10 +102,9 @@ export async function cancelBuyerOrderAction(orderId: string) {
     const user = await requireUser(['BUYER', 'SELLER', 'ADMIN'])
     const ok = cancelOrderByBuyer(orderId, user.id)
     if (!ok) return { ok: false as const, error: 'Order cannot be cancelled' }
-    revalidatePath('/orders')
-    revalidatePath(`/orders/${orderId}`)
-    revalidatePath('/seller/orders')
-    revalidatePath('/shop')
+    revalidatePath('/')
+    revalidatePath('/buyer')
+    revalidatePath('/seller')
     return { ok: true as const }
   } catch {
     return { ok: false as const, error: 'Failed to cancel order' }
