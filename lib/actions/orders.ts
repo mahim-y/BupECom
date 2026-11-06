@@ -35,7 +35,7 @@ export async function placeOrderAction(payload: unknown): Promise<CheckoutResult
     let subtotal = 0
 
     for (const item of parsed.data.items) {
-      const product = getProduct(item.productId)
+      const product = await getProduct(item.productId)
       if (!product || !product.is_active) {
         return { ok: false, error: 'One or more products are unavailable' }
       }
@@ -57,7 +57,7 @@ export async function placeOrderAction(payload: unknown): Promise<CheckoutResult
     const deliveryFee = user.isBupVerified || subtotal > 1000 ? 0 : 60
     const total = subtotal - discount + deliveryFee
 
-    const order = createOrder({
+    const order = await createOrder({
       buyerId: user.id,
       paymentMethod: parsed.data.paymentMethod,
       subtotal,
@@ -87,7 +87,7 @@ export async function updateSellerOrderStatusAction(orderId: string, status: str
     const user = await requireUser(['SELLER', 'ADMIN'])
     const allowed = ['CONFIRMED', 'SHIPPED', 'DELIVERED', 'CANCELLED']
     if (!allowed.includes(status)) return { ok: false as const, error: 'Invalid status' }
-    const ok = updateOrderStatus(orderId, user.id, status)
+    const ok = await updateOrderStatus(orderId, user.id, status)
     if (!ok) return { ok: false as const, error: 'Order not found' }
     revalidatePath('/seller')
     revalidatePath('/')
@@ -100,7 +100,7 @@ export async function updateSellerOrderStatusAction(orderId: string, status: str
 export async function cancelBuyerOrderAction(orderId: string) {
   try {
     const user = await requireUser(['BUYER', 'SELLER', 'ADMIN'])
-    const ok = cancelOrderByBuyer(orderId, user.id)
+    const ok = await cancelOrderByBuyer(orderId, user.id)
     if (!ok) return { ok: false as const, error: 'Order cannot be cancelled' }
     revalidatePath('/')
     revalidatePath('/buyer')

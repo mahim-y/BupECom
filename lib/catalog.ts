@@ -1,4 +1,11 @@
 import { getDb, cuid, type DbProduct, type DbUser, type DbOrder, type DbOrderItem } from '@/lib/db'
+import {
+  isMongoConfigured,
+  getUserRepository,
+  getProductRepository,
+  getOrderRepository,
+  getReviewRepository,
+} from './db/index'
 
 export type ProductCard = DbProduct & {
   seller_name: string
@@ -6,12 +13,97 @@ export type ProductCard = DbProduct & {
   seller_type: string | null
 }
 
-export function listProducts(opts?: {
+function mapMongoProductToProductCard(p: any): ProductCard {
+  return {
+    id: p.id,
+    seller_id: p.sellerId,
+    name: p.name,
+    description: p.description,
+    category: p.category,
+    price: p.price,
+    original_price: p.originalPrice ?? null,
+    image: p.image,
+    stock: p.stock,
+    in_stock: p.inStock ? 1 : 0,
+    tag: p.tag ?? null,
+    delivery_time: p.deliveryTime,
+    rating: p.rating,
+    reviews_count: p.reviewsCount,
+    is_active: p.isActive ? 1 : 0,
+    meal_type: p.mealType ?? null,
+    seller_name: p.sellerName || 'Central Canteen',
+    store_name: p.storeName ?? null,
+    seller_type: p.sellerType ?? null,
+    created_at: p.createdAt ? new Date(p.createdAt).toISOString() : new Date().toISOString(),
+    updated_at: p.updatedAt ? new Date(p.updatedAt).toISOString() : new Date().toISOString(),
+  }
+}
+
+function mapMongoUserToDbUser(u: any): DbUser {
+  return {
+    id: u.id,
+    email: u.email,
+    password_hash: u.passwordHash,
+    name: u.name,
+    phone: u.phone ?? null,
+    role: u.role,
+    student_id: u.studentId ?? null,
+    department: u.department ?? null,
+    is_bup_verified: u.isBupVerified ? 1 : 0,
+    store_name: u.storeName ?? null,
+    store_description: u.storeDescription ?? null,
+    seller_type: u.sellerType ?? null,
+    created_at: u.createdAt ? new Date(u.createdAt).toISOString() : new Date().toISOString(),
+    updated_at: u.updatedAt ? new Date(u.updatedAt).toISOString() : new Date().toISOString(),
+  }
+}
+
+function mapMongoOrderToDbOrder(o: any): DbOrder & { items: DbOrderItem[] } {
+  return {
+    id: o.id,
+    order_number: o.orderNumber,
+    buyer_id: o.buyerId,
+    status: o.status,
+    payment_method: o.paymentMethod,
+    payment_status: o.paymentStatus,
+    subtotal: o.subtotal,
+    delivery_fee: o.deliveryFee,
+    discount: o.discount,
+    total: o.total,
+    delivery_campus: o.deliveryCampus ?? null,
+    delivery_address: o.deliveryAddress ?? null,
+    phone: o.phone ?? null,
+    notes: o.notes ?? null,
+    created_at: o.createdAt ? new Date(o.createdAt).toISOString() : new Date().toISOString(),
+    updated_at: o.updatedAt ? new Date(o.updatedAt).toISOString() : new Date().toISOString(),
+    items: (o.items || []).map((it: any) => ({
+      id: it.id || cuid(),
+      order_id: o.id,
+      product_id: it.productId,
+      seller_id: it.sellerId,
+      name: it.name,
+      price: it.price,
+      quantity: it.quantity,
+      image: it.image,
+    })),
+  }
+}
+
+export async function listProducts(opts?: {
   category?: string
   q?: string
   sellerId?: string
   activeOnly?: boolean
-}) {
+}): Promise<ProductCard[]> {
+  if (isMongoConfigured()) {
+    try {
+      const list = await getProductRepository().list(opts)
+      return list.map(mapMongoProductToProductCard)
+    } catch {
+      // Fallback to SQLite if Mongo is unreachable
+    }
+  }
+
   const db = getDb()
   const clauses: string[] = []
   const params: (string | number)[] = []
@@ -45,9 +137,23 @@ export function listProducts(opts?: {
     .all(...params) as ProductCard[]
 }
 
-export function getProduct(id: string) {
+export async function getProduct(id: string): Promise<(ProductCard & { seller_user_id: string }) | null> {
+  if (isMongoConfigured()) {
+    try {
+      const p = await getProductRepository().findById(id)
+      if (p) {
+        return {
+          ...mapMongoProductToProductCard(p),
+          seller_user_id: p.sellerId,
+        }
+      }
+    } catch {
+      // Fallback to SQLite
+    }
+  }
+
   const db = getDb()
-  return db
+  const row = db
     .prepare(
       `SELECT p.*, u.name as seller_name, u.store_name, u.seller_type, u.id as seller_user_id
        FROM products p
@@ -55,9 +161,10 @@ export function getProduct(id: string) {
        WHERE p.id = ?`
     )
     .get(id) as (ProductCard & { seller_user_id: string }) | undefined
+  return row ?? null
 }
 
-export function createProduct(input: {
+export async function createProduct(input: {
   sellerId: string
   name: string
   description: string
@@ -68,13 +175,19 @@ export function createProduct(input: {
   stock: number
   tag?: string | null
   deliveryTime?: string
-}) {
+  mealType?: string | null
+}): Promise<ProductCard> {
+  if (isMongoConfigured()) {
+    const p = await getProductRepository().create(input)
+    return mapMongoProductToProductCard(p)
+  }
+
   const db = getDb()
   const id = cuid()
   db.prepare(
     `INSERT INTO products
-      (id, seller_id, name, description, category, price, original_price, image, stock, in_stock, tag, delivery_time)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      (id, seller_id, name, description, category, price, original_price, image, stock, in_stock, tag, delivery_time, meal_type)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(
     id,
     input.sellerId,
@@ -87,12 +200,14 @@ export function createProduct(input: {
     input.stock,
     input.stock > 0 ? 1 : 0,
     input.tag ?? null,
-    input.deliveryTime ?? '2-4 days'
+    input.deliveryTime ?? '2-4 days',
+    input.mealType ?? null
   )
-  return getProduct(id)!
+  const product = await getProduct(id)
+  return product!
 }
 
-export function updateProduct(
+export async function updateProduct(
   id: string,
   sellerId: string,
   input: Partial<{
@@ -106,9 +221,15 @@ export function updateProduct(
     tag: string | null
     deliveryTime: string
     isActive: boolean
+    mealType?: string | null
   }>
-) {
-  const existing = getProduct(id)
+): Promise<ProductCard | null> {
+  if (isMongoConfigured()) {
+    const updated = await getProductRepository().update(id, sellerId, input)
+    return updated ? mapMongoProductToProductCard(updated) : null
+  }
+
+  const existing = await getProduct(id)
   if (!existing || existing.seller_id !== sellerId) return null
 
   const name = input.name ?? existing.name
@@ -147,23 +268,45 @@ export function updateProduct(
   return getProduct(id)
 }
 
-export function deleteProduct(id: string, sellerId: string) {
+export async function deleteProduct(id: string, sellerId: string): Promise<boolean> {
+  if (isMongoConfigured()) {
+    return getProductRepository().delete(id, sellerId)
+  }
+
   const db = getDb()
   const result = db.prepare('DELETE FROM products WHERE id = ? AND seller_id = ?').run(id, sellerId)
   return result.changes > 0
 }
 
-export function findUserByEmail(email: string) {
+export async function findUserByEmail(email: string): Promise<DbUser | undefined> {
+  if (isMongoConfigured()) {
+    try {
+      const user = await getUserRepository().findByEmail(email)
+      if (user) return mapMongoUserToDbUser(user)
+    } catch {
+      // Fallback
+    }
+  }
+
   const db = getDb()
   return db.prepare('SELECT * FROM users WHERE email = ? COLLATE NOCASE').get(email) as DbUser | undefined
 }
 
-export function findUserById(id: string) {
+export async function findUserById(id: string): Promise<DbUser | undefined> {
+  if (isMongoConfigured()) {
+    try {
+      const user = await getUserRepository().findById(id)
+      if (user) return mapMongoUserToDbUser(user)
+    } catch {
+      // Fallback
+    }
+  }
+
   const db = getDb()
   return db.prepare('SELECT * FROM users WHERE id = ?').get(id) as DbUser | undefined
 }
 
-export function createUser(input: {
+export async function createUser(input: {
   email: string
   passwordHash: string
   name: string
@@ -175,7 +318,16 @@ export function createUser(input: {
   storeName?: string
   storeDescription?: string
   sellerType?: string
-}) {
+}): Promise<DbUser> {
+  if (isMongoConfigured()) {
+    try {
+      const user = await getUserRepository().create(input)
+      return mapMongoUserToDbUser(user)
+    } catch {
+      // Fallback
+    }
+  }
+
   const db = getDb()
   const id = cuid()
   db.prepare(
@@ -196,10 +348,11 @@ export function createUser(input: {
     input.storeDescription ?? null,
     input.sellerType ?? null
   )
-  return findUserById(id)!
+  const created = await findUserById(id)
+  return created!
 }
 
-export function createOrder(input: {
+export async function createOrder(input: {
   buyerId: string
   paymentMethod: 'COD' | 'BKASH' | 'NAGAD' | 'CARD'
   subtotal: number
@@ -211,11 +364,20 @@ export function createOrder(input: {
   phone?: string
   notes?: string
   items: { productId: string; sellerId: string; name: string; price: number; quantity: number; image: string }[]
-}) {
+}): Promise<DbOrder & { items: DbOrderItem[] }> {
+  if (isMongoConfigured()) {
+    try {
+      const order = await getOrderRepository().create(input)
+      return mapMongoOrderToDbOrder(order)
+    } catch {
+      // Fallback
+    }
+  }
+
   const db = getDb()
   const id = cuid()
   const orderNumber = `BUP-${Math.floor(100000 + Math.random() * 900000)}`
-  const paymentStatus = input.paymentMethod === 'COD' ? 'PENDING' : 'PENDING'
+  const paymentStatus = 'PENDING'
   const status = 'PENDING'
 
   const insertOrder = db.prepare(
@@ -264,10 +426,16 @@ export function createOrder(input: {
     throw e
   }
 
-  return getOrder(id)!
+  const order = await getOrder(id)
+  return order!
 }
 
-export function getOrder(id: string) {
+export async function getOrder(id: string): Promise<(DbOrder & { items: DbOrderItem[] }) | null> {
+  if (isMongoConfigured()) {
+    const order = await getOrderRepository().findById(id)
+    return order ? mapMongoOrderToDbOrder(order) : null
+  }
+
   const db = getDb()
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(id) as DbOrder | undefined
   if (!order) return null
@@ -275,14 +443,24 @@ export function getOrder(id: string) {
   return { ...order, items }
 }
 
-export function getOrderByNumber(orderNumber: string) {
+export async function getOrderByNumber(orderNumber: string): Promise<(DbOrder & { items: DbOrderItem[] }) | null> {
+  if (isMongoConfigured()) {
+    const order = await getOrderRepository().findByOrderNumber(orderNumber)
+    return order ? mapMongoOrderToDbOrder(order) : null
+  }
+
   const db = getDb()
   const order = db.prepare('SELECT * FROM orders WHERE order_number = ?').get(orderNumber) as DbOrder | undefined
   if (!order) return null
   return getOrder(order.id)
 }
 
-export function listBuyerOrders(buyerId: string) {
+export async function listBuyerOrders(buyerId: string): Promise<(DbOrder & { items: DbOrderItem[] })[]> {
+  if (isMongoConfigured()) {
+    const orders = await getOrderRepository().listBuyerOrders(buyerId)
+    return orders.map(mapMongoOrderToDbOrder)
+  }
+
   const db = getDb()
   const orders = db
     .prepare('SELECT * FROM orders WHERE buyer_id = ? ORDER BY created_at DESC')
@@ -293,7 +471,12 @@ export function listBuyerOrders(buyerId: string) {
   })
 }
 
-export function listSellerOrders(sellerId: string) {
+export async function listSellerOrders(sellerId: string): Promise<(DbOrder & { items: DbOrderItem[] })[]> {
+  if (isMongoConfigured()) {
+    const orders = await getOrderRepository().listSellerOrders(sellerId)
+    return orders.map(mapMongoOrderToDbOrder)
+  }
+
   const db = getDb()
   const rows = db
     .prepare(
@@ -313,7 +496,11 @@ export function listSellerOrders(sellerId: string) {
   })
 }
 
-export function updateOrderStatus(orderId: string, sellerId: string, status: string) {
+export async function updateOrderStatus(orderId: string, sellerId: string, status: string): Promise<boolean> {
+  if (isMongoConfigured()) {
+    return getOrderRepository().updateStatus(orderId, sellerId, status)
+  }
+
   const db = getDb()
   const owned = db
     .prepare('SELECT 1 FROM order_items WHERE order_id = ? AND seller_id = ? LIMIT 1')
@@ -323,7 +510,11 @@ export function updateOrderStatus(orderId: string, sellerId: string, status: str
   return true
 }
 
-export function cancelOrderByBuyer(orderId: string, buyerId: string) {
+export async function cancelOrderByBuyer(orderId: string, buyerId: string): Promise<boolean> {
+  if (isMongoConfigured()) {
+    return getOrderRepository().cancel(orderId, buyerId)
+  }
+
   const db = getDb()
   const order = db.prepare('SELECT * FROM orders WHERE id = ? AND buyer_id = ?').get(orderId, buyerId) as DbOrder | undefined
   if (!order || order.status !== 'PENDING') return false
@@ -348,10 +539,15 @@ export function cancelOrderByBuyer(orderId: string, buyerId: string) {
   }
 }
 
-export function upgradeUserToSeller(
+export async function upgradeUserToSeller(
   userId: string,
   input: { storeName: string; sellerType?: string; phone?: string; storeDescription?: string }
-) {
+): Promise<DbUser | null> {
+  if (isMongoConfigured()) {
+    const updated = await getUserRepository().upgradeToSeller(userId, input)
+    return updated ? mapMongoUserToDbUser(updated) : null
+  }
+
   const db = getDb()
   db.prepare(
     `UPDATE users SET
@@ -369,13 +565,19 @@ export function upgradeUserToSeller(
     input.phone ?? null,
     userId
   )
-  return findUserById(userId)
+  const user = await findUserById(userId)
+  return user ?? null
 }
 
-export function updateUserProfile(
+export async function updateUserProfile(
   userId: string,
   input: { name?: string; phone?: string; storeName?: string; storeDescription?: string }
-) {
+): Promise<DbUser | null> {
+  if (isMongoConfigured()) {
+    const updated = await getUserRepository().updateProfile(userId, input)
+    return updated ? mapMongoUserToDbUser(updated) : null
+  }
+
   const db = getDb()
   db.prepare(
     `UPDATE users SET
@@ -386,7 +588,8 @@ export function updateUserProfile(
       updated_at = datetime('now')
      WHERE id = ?`
   ).run(input.name ?? null, input.phone ?? null, input.storeName ?? null, input.storeDescription ?? null, userId)
-  return findUserById(userId)
+  const user = await findUserById(userId)
+  return user ?? null
 }
 
 export type ProductReview = {
@@ -399,7 +602,20 @@ export type ProductReview = {
   created_at: string
 }
 
-export function listProductReviews(productId: string): ProductReview[] {
+export async function listProductReviews(productId: string): Promise<ProductReview[]> {
+  if (isMongoConfigured()) {
+    const reviews = await getReviewRepository().listByProduct(productId)
+    return reviews.map((r: any) => ({
+      id: r.id,
+      product_id: r.productId,
+      user_id: r.userId,
+      user_name: r.userName,
+      rating: r.rating,
+      comment: r.comment ?? null,
+      created_at: r.createdAt ? new Date(r.createdAt).toISOString() : new Date().toISOString(),
+    }))
+  }
+
   const db = getDb()
   return db
     .prepare(
@@ -412,12 +628,16 @@ export function listProductReviews(productId: string): ProductReview[] {
     .all(productId) as ProductReview[]
 }
 
-export function addOrUpdateReview(input: {
+export async function addOrUpdateReview(input: {
   productId: string
   userId: string
   rating: number
   comment?: string
-}) {
+}): Promise<boolean> {
+  if (isMongoConfigured()) {
+    return getReviewRepository().addOrUpdate(input)
+  }
+
   const db = getDb()
   const reviewId = cuid()
 
@@ -450,9 +670,16 @@ export function addOrUpdateReview(input: {
   }
 }
 
-export function countUsers() {
+export async function countUsers(): Promise<number> {
+  if (isMongoConfigured()) {
+    try {
+      return await getUserRepository().count()
+    } catch {
+      // Fallback
+    }
+  }
+
   const db = getDb()
   const row = db.prepare('SELECT COUNT(*) as c FROM users').get() as { c: number }
   return row.c
 }
-

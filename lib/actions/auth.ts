@@ -39,7 +39,7 @@ export async function loginAction(formData: FormData): Promise<ActionResult> {
   })
   if (!parsed.success) return { ok: false, error: 'Invalid email or password' }
 
-  let user = findUserByEmail(parsed.data.email)
+  let user = await findUserByEmail(parsed.data.email)
   if (!user) return { ok: false, error: 'No account found with this email' }
 
   const valid = await verifyPassword(parsed.data.password, user.password_hash)
@@ -49,7 +49,7 @@ export async function loginAction(formData: FormData): Promise<ActionResult> {
   if (user.role === 'BUYER') {
     const db = getDb()
     db.prepare(`UPDATE users SET role = 'SELLER', store_name = COALESCE(store_name, ? || '''s Stall') WHERE id = ?`).run(user.name, user.id)
-    user = findUserByEmail(parsed.data.email)!
+    user = (await findUserByEmail(parsed.data.email))!
   }
 
   await createSession(user)
@@ -71,7 +71,7 @@ export async function registerAction(formData: FormData): Promise<ActionResult> 
 
   if (!parsed.success) return { ok: false, error: 'Please fill all required fields correctly' }
 
-  if (findUserByEmail(parsed.data.email)) {
+  if (await findUserByEmail(parsed.data.email)) {
     return { ok: false, error: 'An account with this email already exists' }
   }
 
@@ -80,7 +80,7 @@ export async function registerAction(formData: FormData): Promise<ActionResult> 
   const storeName = parsed.data.storeName?.trim() || `${parsed.data.name}'s Stall`
 
   // One unified account grants both buyer & seller capabilities
-  const user = createUser({
+  const user = await createUser({
     email: parsed.data.email,
     passwordHash,
     name: parsed.data.name,
@@ -111,7 +111,7 @@ export async function upgradeToSellerAction(formData: FormData): Promise<ActionR
     return { ok: false, error: 'Store name is required (at least 2 characters)' }
   }
 
-  const updated = upgradeUserToSeller(user.id, {
+  const updated = await upgradeUserToSeller(user.id, {
     storeName,
     sellerType,
     phone: phone || undefined,
@@ -133,7 +133,7 @@ export async function updateUserProfileAction(formData: FormData): Promise<Actio
   const storeName = String(formData.get('storeName') || '').trim()
   const storeDescription = String(formData.get('storeDescription') || '').trim()
 
-  const updated = updateUserProfile(user.id, {
+  const updated = await updateUserProfile(user.id, {
     name: name || undefined,
     phone: phone || undefined,
     storeName: storeName || undefined,

@@ -196,3 +196,11 @@ export type DbOrderItem = {
   quantity: number
   image: string
 }
+
+export {
+  isMongoConfigured,
+  getUserRepository,
+  getProductRepository,
+  getOrderRepository,
+  getReviewRepository,
+} from './db/index'

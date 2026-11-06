@@ -2,14 +2,26 @@ import { getDb } from '@/lib/db'
 import { countUsers, createUser, createProduct } from '@/lib/catalog'
 import { hashPassword } from '@/lib/auth'
 import { PRODUCTS } from '@/lib/mock-data'
+import { isMongoConfigured } from './db/index'
+import { ensureMongoSeeded } from '@/lib/db/mongodb/seed'
 
 export async function ensureSeeded() {
+  if (isMongoConfigured()) {
+    try {
+      await ensureMongoSeeded()
+      return
+    } catch (e: any) {
+      console.warn('⚠️ [MongoDB Seeder Warning]:', e?.message)
+      console.warn('👉 Continuing with local database fallback.')
+    }
+  }
+
   const db = getDb()
 
-  if (countUsers() === 0) {
+  if ((await countUsers()) === 0) {
     const password = await hashPassword('password123')
 
-    createUser({
+    await createUser({
       email: 'admin@bupnest.com',
       passwordHash: password,
       name: 'BUP Nest Admin',
@@ -84,7 +96,7 @@ export async function ensureSeeded() {
     ]
 
     for (const s of sellers) {
-      createUser({
+      await createUser({
         email: s.email,
         passwordHash: password,
         name: s.name,

@@ -35,7 +35,7 @@ export async function createProductAction(formData: FormData): Promise<ActionRes
     })
     if (!parsed.success) return { ok: false, error: 'Please check product fields' }
 
-    const product = createProduct({
+    const product = await createProduct({
       sellerId: user.id,
       ...parsed.data,
       originalPrice: parsed.data.originalPrice ?? null,
@@ -66,7 +66,7 @@ export async function updateProductAction(productId: string, formData: FormData)
     })
     if (!parsed.success) return { ok: false, error: 'Please check product fields' }
 
-    const updated = updateProduct(productId, user.id, {
+    const updated = await updateProduct(productId, user.id, {
       ...parsed.data,
       originalPrice: parsed.data.originalPrice ?? null,
       tag: parsed.data.tag ?? null,
@@ -86,7 +86,7 @@ export async function updateProductAction(productId: string, formData: FormData)
 export async function deleteProductAction(productId: string): Promise<ActionResult> {
   try {
     const user = await requireUser(['SELLER', 'ADMIN'])
-    const ok = deleteProduct(productId, user.id)
+    const ok = await deleteProduct(productId, user.id)
     if (!ok) return { ok: false, error: 'Product not found' }
     revalidatePath('/seller')
     revalidatePath('/buyer')
@@ -107,7 +107,7 @@ export async function submitReviewAction(productId: string, formData: FormData):
       return { ok: false, error: 'Rating must be between 1 and 5 stars' }
     }
 
-    addOrUpdateReview({
+    await addOrUpdateReview({
       productId,
       userId: user.id,
       rating,
